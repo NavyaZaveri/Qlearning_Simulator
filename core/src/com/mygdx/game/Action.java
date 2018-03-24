@@ -1,3 +1,5 @@
+package com.mygdx.game;
+
 /**
  * Created by linux on 3/24/18.
  */

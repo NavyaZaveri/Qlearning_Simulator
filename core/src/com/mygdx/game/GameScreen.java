@@ -20,6 +20,7 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 5;
+    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols-150, SCREEN_WIDTH / rows-150);
     Board board;
 
     public GameScreen(SpriteBatch batch) {
@@ -30,7 +31,7 @@ public class GameScreen implements Screen {
     }
 
     private void clearScreen() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
@@ -40,11 +41,16 @@ public class GameScreen implements Screen {
                 Tile tile = board.getTile(i, j);
                 batch.draw(tile.getImage(), i * tile.getWidth(), j * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
-                Gdx.app.log("info",tile.getId());
             }
         }
     }
 
+    private void drawRobot() {
+        //batch.setColor(0,0,0,0.1f);
+        batch.draw(agent.getImage(), 30, 30, agent.getWidth(), agent.getHeight());
+        batch.setColor(1,1,1,1f);
+
+    }
 
     @Override
     public void show() {
@@ -58,6 +64,7 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         drawBoard();
+        drawRobot();
         batch.end();
     }
 

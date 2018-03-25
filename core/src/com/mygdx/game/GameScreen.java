@@ -1,9 +1,9 @@
 package com.mygdx.game;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.    Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import org.jgrapht.graph.SimpleGraph;
@@ -20,7 +20,8 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 5;
-    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols-150, SCREEN_WIDTH / rows-150);
+    public int robotOffset = 150;
+    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols-robotOffset, SCREEN_WIDTH / rows-robotOffset);
     Board board;
 
     public GameScreen(SpriteBatch batch) {
@@ -31,7 +32,7 @@ public class GameScreen implements Screen {
     }
 
     private void clearScreen() {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
@@ -46,9 +47,10 @@ public class GameScreen implements Screen {
     }
 
     private void drawRobot() {
-        //batch.setColor(0,0,0,0.1f);
+//        batch.setColor(1f,1f,1f,0.5f);
+        Pixmap pixmap = new Pixmap(cols, rows, Pixmap.Format.RGBA8888);
         batch.draw(agent.getImage(), 30, 30, agent.getWidth(), agent.getHeight());
-        batch.setColor(1,1,1,1f);
+        batch.setColor(1,1,1,1);
 
     }
 

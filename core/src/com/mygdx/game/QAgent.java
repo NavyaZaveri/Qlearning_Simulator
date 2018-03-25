@@ -24,7 +24,7 @@ public class QAgent implements Agent {
     private Map<Integer, List<Integer>> stateToAction = new HashMap<Integer, List<Integer>>();
     private List<Action> actionList;
     private float epsilon;
-    private Texture img = new Texture("android/assets/robot.png");
+    private Texture img = new Texture("android/assets/Robot.png");
 
     private float speed = 100;
     public Action currentAction;

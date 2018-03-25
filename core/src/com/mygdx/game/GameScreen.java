@@ -1,12 +1,19 @@
 package com.mygdx.game;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.    Screen;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import org.jgrapht.graph.SimpleGraph;
+
+
+import static com.mygdx.game.Action.DOWN;
+import static com.mygdx.game.Action.LEFT;
+import static com.mygdx.game.Action.RIGHT;
+import static com.mygdx.game.Action.UP;
 
 /**
  * Created by linux on 3/24/18.
@@ -21,14 +28,56 @@ public class GameScreen implements Screen {
     public static final int cols = 3;
     public static final int rows = 5;
     public int robotOffset = 150;
-    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols-robotOffset, SCREEN_WIDTH / rows-robotOffset);
+    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - robotOffset, SCREEN_WIDTH / rows - robotOffset);
     Board board;
+    SimpleGraph<Tile, Reward> graph;
 
     public GameScreen(SpriteBatch batch) {
         this.batch = batch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         board = new Board(rows, cols);
+        graph = new SimpleGraph<Tile, Reward>(Reward.class);
+        populateGraph();
+        agent.forceMove(UP);
+    }
+
+
+    private void setHorizontalEdges() {
+        for (int i = 0; i < rows; i++) {
+            Tile v1 = board.getTile(i, 0);
+            for (int j = 1; j < cols; j++) {
+                Tile v2 = board.getTile(i, j);
+                Reward r = graph.addEdge(v1, v2);
+                graph.setEdgeWeight(r, 20);
+                v1 = v2;
+            }
+
+        }
+    }
+
+    private void setVerticalEges() {
+        for (int i = 0; i < cols; i++) {
+            Tile tile = board.getTile(0, i);
+            Tile v1 = tile;
+            for (int j = 1; j < rows; j++) {
+                Tile v2 = board.getTile(j, i);
+                Reward r = graph.addEdge(v1, v2);
+                graph.setEdgeWeight(r, 20);
+                v1 = v2;
+            }
+        }
+    }
+
+    private void populateGraph() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Tile tile = board.getTile(i, j);
+                graph.addVertex(tile);
+            }
+        }
+        setHorizontalEdges();
+        setVerticalEges();
     }
 
     private void clearScreen() {
@@ -46,12 +95,36 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void drawRobot() {
-//        batch.setColor(1f,1f,1f,0.5f);
-        Pixmap pixmap = new Pixmap(cols, rows, Pixmap.Format.RGBA8888);
-        batch.draw(agent.getImage(), 30, 30, agent.getWidth(), agent.getHeight());
-        batch.setColor(1,1,1,1);
 
+    private Boolean detectOverlap() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Tile tile = board.getTile(i, j);
+                if (tile.getRectangle().contains(agent.pos)) {
+                    Gdx.app.log("info", tile.getId());
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+        public Tile getCurrentState(){
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    Tile tile = board.getTile(i, j);
+                    if (tile.getRectangle().contains(agent.pos)) {
+                        Gdx.app.log("info", tile.getId());
+                        return tile;
+                    }
+                }
+            }
+            return null;
+
+        }
+
+
+    private void drawRobot() {
+        batch.draw(agent.getImage(), agent.getX(), agent.getY(), agent.getWidth(), agent.getHeight());
     }
 
     @Override
@@ -67,7 +140,20 @@ public class GameScreen implements Screen {
         batch.begin();
         drawBoard();
         drawRobot();
+
+
         batch.end();
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
+        if (detectOverlap() && agent.currentState!=getCurrentState()){
+            agent.makeNewMove();
+            agent.setCurrentState(getCurrentState());
+        }
+        else{
+            agent.move();
+        }
     }
 
     @Override

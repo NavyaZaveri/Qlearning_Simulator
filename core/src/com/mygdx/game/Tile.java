@@ -16,8 +16,8 @@ public class Tile {
     public Tile(int height, int width, int i, int j) {
         tile.height = height;
         tile.width = width;
-        tile.x = i;
-        tile.y = j;
+        tile.x = i*width;
+        tile.y = j*height;
         id = "[" + i + "," + j + "]";
     }
 
@@ -29,17 +29,16 @@ public class Tile {
         return this.id;
     }
 
-    @Override
-    public String toString() {
-        return this.id;
-    }
-
     public float getHeight() {
         return tile.height;
     }
 
     public float getWidth() {
         return tile.width;
+    }
+
+    public Rectangle getRectangle(){
+        return this.tile;
     }
 
 }

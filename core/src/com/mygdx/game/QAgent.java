@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,15 +20,19 @@ import static com.mygdx.game.Action.UP;
  * Created by linux on 3/24/18.
  */
 
-public class QAgent implements Agent {
+public class QAgent {
 
     private Map<Integer, List<Integer>> stateToAction = new HashMap<Integer, List<Integer>>();
     private List<Action> actionList;
-    private float epsilon;
+    private static final float epsilon = 0.1f;
     private Texture img = new Texture("android/assets/Robot.png");
+    private Random random = new Random();
+    private Action currentAction;
+    public Tile currentState;
 
-    private float speed = 100;
-    public Action currentAction;
+
+    private float speed = 200;
+    public Action action;
     public Rectangle pos;
 
     public QAgent(int height, int width) {
@@ -37,16 +42,27 @@ public class QAgent implements Agent {
         pos.width = width;
     }
 
+
     private Action getAction() {
-        return null;
+        return actionList.get(random.nextInt(actionList.size()));
     }
 
-    @Override
-    public void move(Action action) {
+    public void makeNewMove() {
+        action = getAction();
+        currentAction = action;
+        move();
+    }
 
+    public void forceMove(Action action) {
+        currentAction = action;
+        move();
+
+    }
+
+
+    public void move() {
         if (currentAction == UP) {
             pos.y += speed * Gdx.graphics.getDeltaTime();
-
         }
         if (currentAction == DOWN) {
             pos.y -= speed * Gdx.graphics.getDeltaTime();
@@ -59,7 +75,9 @@ public class QAgent implements Agent {
         if (currentAction == LEFT) {
             pos.x -= speed * Gdx.graphics.getDeltaTime();
         }
+
     }
+
 
     public Texture getImage() {
         return img;
@@ -84,4 +102,11 @@ public class QAgent implements Agent {
         return pos.y;
 
     }
+
+    public void setCurrentState(Tile tile){
+        currentState = tile;
+
+    }
+
+
 }

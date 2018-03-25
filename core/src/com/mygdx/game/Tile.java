@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Created by linux on 3/24/18.
@@ -9,21 +10,22 @@ import com.badlogic.gdx.graphics.Texture;
 public class Tile {
 
     public static final Texture img = new Texture("android/assets/squre_tile.png");
-    private  int width;
-    private int height;
+    private Rectangle tile = new Rectangle();
     private String id;
 
-    public Tile(int height, int width, int i, int j){
-        this.height = height;
-        this.width = width;
-        id = "["+i+","+j+"]";
+    public Tile(int height, int width, int i, int j) {
+        tile.height = height;
+        tile.width = width;
+        tile.x = i;
+        tile.y = j;
+        id = "[" + i + "," + j + "]";
     }
 
-    public Texture getImage(){
+    public Texture getImage() {
         return img;
     }
 
-    public String getId(){
+    public String getId() {
         return this.id;
     }
 
@@ -32,11 +34,12 @@ public class Tile {
         return this.id;
     }
 
-    public int getHeight() {
-        return height;
+    public float getHeight() {
+        return tile.height;
     }
 
-    public int getWidth() {
-        return width;
+    public float getWidth() {
+        return tile.width;
     }
+
 }

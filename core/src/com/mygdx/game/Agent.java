@@ -8,8 +8,7 @@ import com.mygdx.game.Action;
 
 interface Agent {
 
-    public Action getAction();
-    public Void move();
+    public void move();
 
 
 }

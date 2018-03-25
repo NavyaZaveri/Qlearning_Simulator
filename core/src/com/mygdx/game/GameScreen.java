@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import org.jgrapht.graph.SimpleGraph;
+
 /**
  * Created by linux on 3/24/18.
  */
@@ -16,9 +18,8 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     public static final int SCREEN_HEIGHT = 1200;
     public static final int SCREEN_WIDTH = 1200;
-    public static final int rows = 6;
-    public static final int cols = 6;
-
+    public static final int cols = 3;
+    public static final int rows = 5;
     Board board;
 
     public GameScreen(SpriteBatch batch) {
@@ -34,14 +35,16 @@ public class GameScreen implements Screen {
     }
 
     private void drawBoard() {
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
                 batch.draw(tile.getImage(), i * tile.getWidth(), j * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
+                Gdx.app.log("info",tile.getId());
             }
         }
     }
+
 
     @Override
     public void show() {

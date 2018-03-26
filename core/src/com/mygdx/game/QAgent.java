@@ -10,6 +10,9 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+
+import org.javatuples.Pair;
+
 import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
 import static com.mygdx.game.Action.RIGHT;
@@ -21,13 +24,14 @@ import static com.mygdx.game.Action.UP;
 
 public class QAgent {
 
-    private Map<Integer, List<Integer>> stateToAction = new HashMap<Integer, List<Integer>>();
     private List<Action> actionList;
     private static final float epsilon = 0.1f;
-    private Texture img = new Texture("android/assets/Robot.png");
+    private Texture img = new Texture("Robot.png");
     private Random random = new Random();
     private Action currentAction;
     public Tile currentState;
+    public Map<Pair<Tile, Action>,Integer> stateToAction = new HashMap<>();
+
 
 
     private float speed = 200;
@@ -39,6 +43,13 @@ public class QAgent {
         actionList = Arrays.asList(Action.class.getEnumConstants());
         pos.height = height;
         pos.width = width;
+    }
+
+    public void setStateToAction(Tile tile){
+        for (Action action: actionList){
+            stateToAction.put(new Pair<Tile,Action>(tile,action),0);
+        }
+      //  System.out.println(stateToAction);
     }
 
 

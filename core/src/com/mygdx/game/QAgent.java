@@ -10,7 +10,6 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-
 import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
 import static com.mygdx.game.Action.RIGHT;

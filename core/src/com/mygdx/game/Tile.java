@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Tile {
 
-    public static final Texture img = new Texture("android/assets/squre_tile.png");
+    public static final Texture img = new Texture("squre_tile.png");
     private Rectangle tile = new Rectangle();
     private String id;
 

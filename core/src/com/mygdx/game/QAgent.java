@@ -10,6 +10,10 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+
+
+import org.javatuples.Pair;
+
 import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
 import static com.mygdx.game.Action.RIGHT;
@@ -21,13 +25,13 @@ import static com.mygdx.game.Action.UP;
 
 public class QAgent {
 
-    private Map<Integer, List<Integer>> stateToAction = new HashMap<Integer, List<Integer>>();
     private List<Action> actionList;
     private static final float epsilon = 0.1f;
-    private Texture img = new Texture("android/assets/Robot.png");
+    private Texture img = new Texture("Robot.png");
     private Random random = new Random();
     private Action currentAction;
     public Tile currentState;
+    private Map<Pair<Tile, Action>, Integer> stateToaction = new HashMap<>();
 
 
     private float speed = 200;
@@ -41,6 +45,11 @@ public class QAgent {
         pos.width = width;
     }
 
+    public void updateStatetoAction(int reward) {
+
+
+    }
+
 
     private Action getAction() {
         return actionList.get(random.nextInt(actionList.size()));
@@ -52,12 +61,17 @@ public class QAgent {
         move();
     }
 
+    public void setStateToaction(Tile tile) {
+        for (Action action : actionList) {
+            Pair<Tile, Action> tile_action = new Pair<>(tile, action);
+            stateToaction.put(tile_action, 0);
+        }
+    }
+
     public void forceMove(Action action) {
         currentAction = action;
         move();
-
     }
-
 
     public void move() {
         if (currentAction == UP) {
@@ -102,7 +116,7 @@ public class QAgent {
 
     }
 
-    public void setCurrentState(Tile tile){
+    public void setCurrentState(Tile tile) {
         currentState = tile;
 
     }

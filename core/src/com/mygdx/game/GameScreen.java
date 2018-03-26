@@ -3,10 +3,12 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -46,8 +48,29 @@ public class GameScreen implements Screen {
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
         populateGraph();
         showGraph();
-        font = new BitmapFont();
+        initStateActionPairs();
+        setFont();
         agent.setCurrentState(board.getTile(0, 0));
+    }
+
+
+    private void initStateActionPairs() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Tile tile = board.getTile(i, j);
+                agent.setStateToaction(tile);
+            }
+        }
+    }
+
+    private void setFont() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 150;
+        font = generator.generateFont(parameter);
+        font.setColor(Color.OLIVE);// font size 12 pixels
+        generator.dispose();
+
     }
 
     private void showGraph() {
@@ -108,6 +131,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
+
     private void resetAgentPosition() {
 
     }
@@ -118,7 +142,6 @@ public class GameScreen implements Screen {
                 Tile tile = board.getTile(i, j);
                 batch.draw(tile.getImage(), i * tile.getWidth(), j * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
-                font.draw(batch, tile.getId(), i * tile.getWidth(), j * tile.getHeight());
 
             }
         }
@@ -168,16 +191,16 @@ public class GameScreen implements Screen {
         batch.begin();
         drawBoard();
         drawRobot();
-
-
         batch.end();
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
-        if (detectOverlap() && agent.currentState != getCurrentState()) {
+
+        if (detectOverlap() && agent.currentState != getCurrentState() && getCurrentState() != null) {
             System.out.println(getCurrentState().getId());
-            System.out.println(graph.getEdge(agent.currentState,getCurrentState()).getWeight());
+            System.out.println(graph.getEdge(agent.currentState, getCurrentState()).getWeight());
             agent.currentState = getCurrentState();
         }
     }

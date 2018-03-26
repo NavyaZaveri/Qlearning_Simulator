@@ -177,6 +177,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
         if (detectOverlap() && agent.currentState != getCurrentState()) {
             System.out.println(getCurrentState().getId());
+            System.out.println(graph.getEdge(agent.currentState,getCurrentState()).getWeight());
             agent.currentState = getCurrentState();
         }
     }

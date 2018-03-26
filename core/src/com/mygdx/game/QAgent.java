@@ -31,7 +31,8 @@ public class QAgent {
     private Random random = new Random();
     private Action currentAction;
     public Tile currentState;
-    private Map<Pair<Tile, Action>, Integer> stateToaction = new HashMap<>();
+    private static final float discountFactor = 0.01f;
+    private Map<Pair<Tile, Action>, Integer> q_table = new HashMap<>();
 
 
     private float speed = 200;
@@ -45,9 +46,27 @@ public class QAgent {
         pos.width = width;
     }
 
-    public void updateStatetoAction(int reward) {
+    private Action chooseBestAction(Tile tile) {
+        Action bestAction;
+        int bestValue;
 
 
+        return null;
+    }
+
+
+    public void updateq_table(int reward) {
+
+        for (Pair<Tile, Action> key : q_table.keySet()) {
+            if (key.getValue0().getId() == currentState.getId() && key.getValue1() == currentAction) {
+                q_table.put(key, reward + q_table.get(key));
+                System.out.println("updated");
+                System.out.println(q_table.get(key));
+                System.out.println(key.getValue0().getId()+key.getValue1());
+                break;
+            }
+
+        }
     }
 
 
@@ -61,10 +80,10 @@ public class QAgent {
         move();
     }
 
-    public void setStateToaction(Tile tile) {
+    public void setq_table(Tile tile) {
         for (Action action : actionList) {
             Pair<Tile, Action> tile_action = new Pair<>(tile, action);
-            stateToaction.put(tile_action, 0);
+            q_table.put(tile_action, 0);
         }
     }
 

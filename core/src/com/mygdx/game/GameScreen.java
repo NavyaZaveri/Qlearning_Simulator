@@ -34,7 +34,7 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 3;
-    public int robotOffset = 150;
+    public int robotOffset = 200;
     public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - robotOffset, SCREEN_WIDTH / rows - robotOffset);
     Board board;
     SimpleDirectedWeightedGraph<Tile, Reward> graph;
@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
-                agent.setStateToaction(tile);
+                agent.setq_table(tile);
             }
         }
     }
@@ -78,8 +78,8 @@ public class GameScreen implements Screen {
             System.out.println(v1.getId());
             Gdx.app.log("info", "vertex");
             for (Reward r : graph.outgoingEdgesOf(v1)) {
-                System.out.println("neighbor");
-                System.out.println(graph.getEdgeTarget(r).getId());
+                //System.out.println("neighbor");
+                //System.out.println(graph.getEdgeTarget(r).getId());
             }
             System.out.println("                ");
         }
@@ -199,9 +199,15 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
 
         if (detectOverlap() && agent.currentState != getCurrentState() && getCurrentState() != null) {
-            System.out.println(getCurrentState().getId());
-            System.out.println(graph.getEdge(agent.currentState, getCurrentState()).getWeight());
-            agent.currentState = getCurrentState();
+            //System.out.println(getCurrentState().getId());
+            double reward = graph.getEdge(agent.currentState, getCurrentState()).getWeight();
+            agent.updateq_table((int) reward);
+            agent.setCurrentState(getCurrentState());
+            agent.makeNewMove();
+
+        }
+        else{
+            agent.move();
         }
     }
 

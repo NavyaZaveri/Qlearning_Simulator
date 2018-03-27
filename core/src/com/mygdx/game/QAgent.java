@@ -2,10 +2,13 @@ package com.mygdx.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,7 +38,7 @@ public class QAgent {
     private Map<Pair<Tile, Action>, Integer> q_table = new HashMap<>();
 
 
-    private float speed = 200;
+    private float speed = 100;
     public Action action;
     public Rectangle pos;
 
@@ -46,12 +49,37 @@ public class QAgent {
         pos.width = width;
     }
 
+    private Integer getBestvalueAtstate(Tile tile) {
+        List<Integer> values = new ArrayList<>();
+        for (Map.Entry<Pair<Tile, Action>, Integer> entry : q_table.entrySet()) {
+            if (entry.getKey().getValue0().getId() == tile.getId()) {
+                values.add(entry.getValue());
+
+            }
+        }
+        return Collections.max(values, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer t1, Integer t2) {
+                return t1 - t2;
+            }
+        });
+    }
+
     private Action chooseBestAction(Tile tile) {
-        Action bestAction;
-        int bestValue;
+        Map<Action, Integer> actionToValue = new HashMap<>();
 
 
-        return null;
+        for (Map.Entry<Pair<Tile, Action>, Integer> x : q_table.entrySet()) {
+            if (x.getKey().getValue0().getId()
+                    == tile.getId()) {
+                actionToValue.put(x.getKey().getValue1(), x.getValue());
+            }
+        }
+
+        Action action = Collections.max(actionToValue.entrySet(),
+                (entry1, entry2) -> entry1.getValue() - entry2.getValue()).getKey();
+
+        return action;
     }
 
 
@@ -59,14 +87,20 @@ public class QAgent {
 
         for (Pair<Tile, Action> key : q_table.keySet()) {
             if (key.getValue0().getId() == currentState.getId() && key.getValue1() == currentAction) {
+                Gdx.app.log("location+action", key + "");
+                Gdx.app.log("previous value:", q_table.get(key) + "");
                 q_table.put(key, reward + q_table.get(key));
-                System.out.println("updated");
-                System.out.println(q_table.get(key));
-                System.out.println(key.getValue0().getId()+key.getValue1());
+                Gdx.app.log("new value:", q_table.get(key) + "");
+                System.out.println(key.getValue0().getId() + key.getValue1());
+                Gdx.app.log("INFO", "UPDATE DONE");
                 break;
             }
 
         }
+    }
+
+    private Action getRandomAction() {
+        return actionList.get(random.nextInt(actionList.size()));
     }
 
 
@@ -74,9 +108,12 @@ public class QAgent {
         return actionList.get(random.nextInt(actionList.size()));
     }
 
+
+    //the robot has detected a change in state. It needs to make a move now.
     public void makeNewMove() {
         action = getAction();
         currentAction = action;
+        System.out.println("the best action is" + chooseBestAction(currentState));
         move();
     }
 
@@ -138,6 +175,14 @@ public class QAgent {
     public void setCurrentState(Tile tile) {
         currentState = tile;
 
+    }
+
+    public void resetLocation(){
+    }
+
+    public void resetPosition(Tile t){
+        pos.x = t.getCentreX();
+        pos.y = t.getCetreY();
     }
 
 

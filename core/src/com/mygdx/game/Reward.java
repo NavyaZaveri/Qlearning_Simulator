@@ -12,4 +12,5 @@ public class Reward extends DefaultWeightedEdge {
     public double getWeight() {
         return super.getWeight();
     }
+
 }

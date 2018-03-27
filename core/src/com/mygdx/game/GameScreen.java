@@ -34,8 +34,8 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 3;
-    public int robotOffset = 200;
-    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - robotOffset, SCREEN_WIDTH / rows - robotOffset);
+    public int agentPosOffset = 250;
+    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     SimpleDirectedWeightedGraph<Tile, Reward> graph;
     BitmapFont font;
@@ -51,6 +51,7 @@ public class GameScreen implements Screen {
         initStateActionPairs();
         setFont();
         agent.setCurrentState(board.getTile(0, 0));
+        agent.resetPosition(board.getTile(0,0));
     }
 
 
@@ -66,11 +67,10 @@ public class GameScreen implements Screen {
     private void setFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 150;
+        parameter.size = 70;
         font = generator.generateFont(parameter);
-        font.setColor(Color.OLIVE);// font size 12 pixels
+        font.setColor(Color.BLACK);// font size 12 pixels
         generator.dispose();
-
     }
 
     private void showGraph() {
@@ -83,6 +83,15 @@ public class GameScreen implements Screen {
             }
             System.out.println("                ");
         }
+    }
+
+    private Boolean outOfBounds(){
+        if (agent.getX()>=SCREEN_WIDTH || agent.getX()<=0 || agent.getY()>=SCREEN_HEIGHT || agent.getY()<=0) {
+            Gdx.app.log("INFO","OUT OF BOUNDS!!!!!");
+            return true;
+        }
+        return false;
+
     }
 
 
@@ -143,6 +152,8 @@ public class GameScreen implements Screen {
                 batch.draw(tile.getImage(), i * tile.getWidth(), j * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
 
+                font.draw(batch,tile.getId(),tile.getCentreX(),tile.getCetreY());
+
             }
         }
     }
@@ -183,6 +194,28 @@ public class GameScreen implements Screen {
 
     }
 
+
+    public Boolean changeOfstate() {
+        return detectOverlap() && agent.currentState != getCurrentState() && getCurrentState() != null;
+
+    }
+
+    public void makeForcedMove(){
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
+    }
+
+
+    /*game strategy:
+    IF there is a change of state from q1 to q2, do the following
+    1) update the qtable for the entry (q1,action)
+    2) set the player's current state to q2
+    3) play out a move
+    otherwise, keep moving in action direction
+     */
+
     @Override
     public void render(float delta) {
         clearScreen();
@@ -193,20 +226,22 @@ public class GameScreen implements Screen {
         drawRobot();
         batch.end();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
 
-        if (detectOverlap() && agent.currentState != getCurrentState() && getCurrentState() != null) {
-            //System.out.println(getCurrentState().getId());
+        //handles user input
+        makeForcedMove();
+        if (outOfBounds()){
+            agent.resetPosition(agent.currentState);
+            agent.makeNewMove();
+            return ;
+        }
+
+        if (changeOfstate()) {
             double reward = graph.getEdge(agent.currentState, getCurrentState()).getWeight();
             agent.updateq_table((int) reward);
             agent.setCurrentState(getCurrentState());
             agent.makeNewMove();
 
-        }
-        else{
+        } else {
             agent.move();
         }
     }

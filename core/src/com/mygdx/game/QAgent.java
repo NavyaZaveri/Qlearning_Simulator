@@ -181,8 +181,8 @@ public class QAgent {
     }
 
     public void resetPosition(Tile t){
-        pos.x = t.getCentreX();
-        pos.y = t.getCentreY();
+        pos.x = t.getCentreX() - pos.width/2;
+        pos.y = t.getCentreY() - pos.height/2;
     }
 
     public void keepMoving(){

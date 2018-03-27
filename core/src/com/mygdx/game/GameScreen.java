@@ -11,14 +11,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.graph.SimpleGraph;
-
 
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
@@ -37,7 +33,7 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 3;
-    public int agentPosOffset = 220;
+    public int agentPosOffset  = 100;
     public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     SimpleDirectedWeightedGraph<Tile, Reward> graph;
@@ -139,6 +135,7 @@ public class GameScreen implements Screen {
         setHorizontalEdges();
         setVerticalEges();
         setFireEdges();
+        setGoalEdges();
     }
 
     private void clearScreen() {
@@ -151,27 +148,36 @@ public class GameScreen implements Screen {
 
     }
 
-    private void setFireEdges(){
-        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(2,2));
-        for (Reward r: rewards){
-            graph.setEdgeWeight(r,-20);
+    private void setFireEdges() {
+
+        //replace with fireTile or something
+        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(2, 2));
+        for (Reward r : rewards) {
+            graph.setEdgeWeight(r, -20);
         }
 
+    }
+
+    private void setGoalEdges() {
+        //TODO
     }
 
     private void displayBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
-                if (tile.isFire()) {
-                    batch.draw(tile.getTileImage(), i * tile.getWidth(), j * tile.getHeight(),
-                            tile.getWidth(), tile.getHeight());
+
+
+                batch.draw(tile.getTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                        tile.getWidth(), tile.getHeight());
+
+                if (tile.isFire())
                     batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
-                } else {
-                    batch.draw(tile.getTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                if (tile.isGoal())
+                    batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
-                }
+
                 font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
 
             }

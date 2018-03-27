@@ -33,7 +33,7 @@ public class QAgent {
     private Texture img = new Texture("Robot.png");
     private Random random = new Random();
     private Action currentAction;
-    public Tile currentState;
+    public Tile currentKnownState;
     private static final float discountFactor = 0.01f;
     private Map<Pair<Tile, Action>, Integer> q_table = new HashMap<>();
 
@@ -83,10 +83,10 @@ public class QAgent {
     }
 
 
-    public void updateq_table(int reward) {
+    public void updateQ_table(int reward) {
 
         for (Pair<Tile, Action> key : q_table.keySet()) {
-            if (key.getValue0().getId() == currentState.getId() && key.getValue1() == currentAction) {
+            if (key.getValue0().getId() == currentKnownState.getId() && key.getValue1() == currentAction) {
                 Gdx.app.log("location+action", key + "");
                 Gdx.app.log("previous value:", q_table.get(key) + "");
                 q_table.put(key, reward + q_table.get(key));
@@ -113,7 +113,7 @@ public class QAgent {
     public void makeNewMove() {
         action = getAction();
         currentAction = action;
-        System.out.println("the best action is" + chooseBestAction(currentState));
+        System.out.println("the best action is" + chooseBestAction(currentKnownState));
         move();
     }
 
@@ -173,7 +173,7 @@ public class QAgent {
     }
 
     public void setCurrentState(Tile tile) {
-        currentState = tile;
+        currentKnownState = tile;
 
     }
 
@@ -182,7 +182,11 @@ public class QAgent {
 
     public void resetPosition(Tile t){
         pos.x = t.getCentreX();
-        pos.y = t.getCetreY();
+        pos.y = t.getCentreY();
+    }
+
+    public void keepMoving(){
+        move();
     }
 
 

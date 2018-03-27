@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -15,6 +16,8 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
 
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.mygdx.game.Action.DOWN;
@@ -27,14 +30,14 @@ import static com.mygdx.game.Action.UP;
  */
 
 public class GameScreen implements Screen {
-
+    private Random random;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     public static final int SCREEN_HEIGHT = 1200;
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 3;
-    public int agentPosOffset = 250;
+    public int agentPosOffset = 220;
     public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     SimpleDirectedWeightedGraph<Tile, Reward> graph;
@@ -47,11 +50,12 @@ public class GameScreen implements Screen {
         board = new Board(rows, cols);
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
         populateGraph();
-        showGraph();
+        //    showGraph();
         initStateActionPairs();
         setFont();
         agent.setCurrentState(board.getTile(0, 0));
-        agent.resetPosition(board.getTile(0,0));
+        agent.resetPosition(board.getTile(0, 0));
+        board.getTile(2, 2).makeFire();
     }
 
 
@@ -63,6 +67,7 @@ public class GameScreen implements Screen {
             }
         }
     }
+
 
     private void setFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
@@ -85,9 +90,9 @@ public class GameScreen implements Screen {
         }
     }
 
-    private Boolean outOfBounds(){
-        if (agent.getX()>=SCREEN_WIDTH || agent.getX()<=0 || agent.getY()>=SCREEN_HEIGHT || agent.getY()<=0) {
-            Gdx.app.log("INFO","OUT OF BOUNDS!!!!!");
+    private Boolean agentOutofBounds() {
+        if (agent.getX() >= SCREEN_WIDTH || agent.getX() <= 0 || agent.getY() >= SCREEN_HEIGHT || agent.getY() <= 0) {
+            Gdx.app.log("INFO", "OUT OF BOUNDS!!!!!");
             return true;
         }
         return false;
@@ -133,6 +138,7 @@ public class GameScreen implements Screen {
         }
         setHorizontalEdges();
         setVerticalEges();
+        setFireEdges();
     }
 
     private void clearScreen() {
@@ -145,14 +151,28 @@ public class GameScreen implements Screen {
 
     }
 
-    private void drawBoard() {
+    private void setFireEdges(){
+        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(2,2));
+        for (Reward r: rewards){
+            graph.setEdgeWeight(r,-20);
+        }
+
+    }
+
+    private void displayBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
-                batch.draw(tile.getImage(), i * tile.getWidth(), j * tile.getHeight(),
-                        tile.getWidth(), tile.getHeight());
-
-                font.draw(batch,tile.getId(),tile.getCentreX(),tile.getCetreY());
+                if (tile.isFire()) {
+                    batch.draw(tile.getTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                            tile.getWidth(), tile.getHeight());
+                    batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
+                            tile.getWidth(), tile.getHeight());
+                } else {
+                    batch.draw(tile.getTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                            tile.getWidth(), tile.getHeight());
+                }
+                font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
 
             }
         }
@@ -185,7 +205,7 @@ public class GameScreen implements Screen {
     }
 
 
-    private void drawRobot() {
+    private void displayRobot() {
         batch.draw(agent.getImage(), agent.getX(), agent.getY(), agent.getWidth(), agent.getHeight());
     }
 
@@ -195,16 +215,24 @@ public class GameScreen implements Screen {
     }
 
 
-    public Boolean changeOfstate() {
-        return detectOverlap() && agent.currentState != getCurrentState() && getCurrentState() != null;
+    private Boolean changeOfstate() {
+        return detectOverlap() && agent.currentKnownState != getCurrentState() && getCurrentState() != null;
 
     }
 
-    public void makeForcedMove(){
+    public void makeForcedMove() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
+    }
+
+    public void displayGame() {
+
+        batch.begin();
+        displayBoard();
+        displayRobot();
+        batch.end();
     }
 
 
@@ -221,28 +249,29 @@ public class GameScreen implements Screen {
         clearScreen();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        drawBoard();
-        drawRobot();
-        batch.end();
 
+
+        displayGame();
 
         //handles user input
         makeForcedMove();
-        if (outOfBounds()){
-            agent.resetPosition(agent.currentState);
+
+
+        if (agentOutofBounds()) {
+            agent.resetPosition(agent.currentKnownState);
             agent.makeNewMove();
-            return ;
+            return;
         }
 
         if (changeOfstate()) {
-            double reward = graph.getEdge(agent.currentState, getCurrentState()).getWeight();
-            agent.updateq_table((int) reward);
+            double reward = graph.getEdge(agent.currentKnownState, getCurrentState()).getWeight();
+
+            agent.updateQ_table((int) reward);
             agent.setCurrentState(getCurrentState());
             agent.makeNewMove();
 
         } else {
-            agent.move();
+            agent.keepMoving();
         }
     }
 

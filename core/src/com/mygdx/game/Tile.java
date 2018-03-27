@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -11,10 +12,14 @@ import com.badlogic.gdx.math.Vector2;
 public class Tile {
 
     public static final Texture img = new Texture("squre_tile.png");
+    public static final Texture fireImage = new Texture(Gdx.files.internal("fire.png"));
+
     private Rectangle tile = new Rectangle();
     private float centreX;
     private float centreY;
     private String id;
+    public Boolean isFire=false;
+
 
     public Tile(int height, int width, int i, int j) {
         tile.height = height;
@@ -27,9 +32,11 @@ public class Tile {
 
     }
 
-    public Texture getImage() {
+    public Texture getTileImage() {
         return img;
     }
+
+    public Texture getFireImage(){return fireImage;}
 
     public String getId() {
         return this.id;
@@ -51,9 +58,15 @@ public class Tile {
         return centreX;
     }
 
-    public float getCetreY() {
+    public float getCentreY() {
         return centreY;
     }
 
+    public void makeFire(){
+        this.isFire = true;
+    }
 
+    public Boolean isFire(){
+        return this.isFire;
+    }
 }

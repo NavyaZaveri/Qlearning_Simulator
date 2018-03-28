@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -34,13 +33,14 @@ public class QAgent {
     private Random random = new Random();
     private Action currentAction;
     public Tile currentKnownState;
-    private static final float discountFactor = 0.01f;
-    private Map<Pair<Tile, Action>, Integer> q_table = new HashMap<>();
+    private static final float discountFactor = 0.05f;
+    public static final float learningRate = 0.01f;
+    private Map<Pair<Tile, Action>, Double> q_table = new HashMap<>();
 
 
-    private float speed = 100;
+    private float speed = 1000;
     public Action action;
-    public Rectangle pos;
+    public final Rectangle pos;
 
     public QAgent(int height, int width) {
         pos = new Rectangle();
@@ -49,51 +49,59 @@ public class QAgent {
         pos.width = width;
     }
 
-    private Integer getBestvalueAtstate(Tile tile) {
-        List<Integer> values = new ArrayList<>();
-        for (Map.Entry<Pair<Tile, Action>, Integer> entry : q_table.entrySet()) {
+    private Double getBestValueAtState(Tile tile) {
+        double max = -100;
+        List<Double> values = new ArrayList<>();
+        for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
             if (entry.getKey().getValue0().getId() == tile.getId()) {
-                values.add(entry.getValue());
-
+                max = Math.max(max, entry.getValue());
             }
         }
-        return Collections.max(values, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer t1, Integer t2) {
-                return t1 - t2;
-            }
-        });
+        return max;
     }
 
-    private Action chooseBestAction(Tile tile) {
-        Map<Action, Integer> actionToValue = new HashMap<>();
+    private Action getBestActionAtState(Tile tile) {
+        Map<Action, Double> actionToValue = new HashMap<>();
 
 
-        for (Map.Entry<Pair<Tile, Action>, Integer> x : q_table.entrySet()) {
+        for (Map.Entry<Pair<Tile, Action>, Double> x : q_table.entrySet()) {
             if (x.getKey().getValue0().getId()
                     == tile.getId()) {
                 actionToValue.put(x.getKey().getValue1(), x.getValue());
             }
         }
+        double value = Collections.max(actionToValue.values());
 
-        Action action = Collections.max(actionToValue.entrySet(),
-                (entry1, entry2) -> entry1.getValue() - entry2.getValue()).getKey();
-
-        return action;
+        List<Action> bestActions = new ArrayList<>();
+        for (Map.Entry<Action, Double> pair : actionToValue.entrySet()) {
+            if (pair.getValue() == value) {
+                bestActions.add(pair.getKey());
+            }
+        }
+        return bestActions.get(random.nextInt(bestActions.size()));
     }
 
 
-    public void updateQ_table(int reward) {
+    public void updateQ_table(Integer reward, Tile newState) {
 
         for (Pair<Tile, Action> key : q_table.keySet()) {
             if (key.getValue0().getId() == currentKnownState.getId() && key.getValue1() == currentAction) {
-                Gdx.app.log("location+action", key + "");
+                Gdx.app.log("location+action", key.getValue0().getId() + key.getValue1());
                 Gdx.app.log("previous value:", q_table.get(key) + "");
-                q_table.put(key, reward + q_table.get(key));
-                Gdx.app.log("new value:", q_table.get(key) + "");
-                System.out.println(key.getValue0().getId() + key.getValue1());
+
+                //bellman equation
+                Double oldValue = q_table.get(key);
+                double newValue = reward + discountFactor * getBestValueAtState(newState);
+                System.out.println("get best value at state " + newState.getId() + getBestValueAtState(newState));
+                q_table.put(key, (oldValue + newValue));
+
+
+                Gdx.app.log("updated state/action:", q_table.get(key) + "");
                 Gdx.app.log("INFO", "UPDATE DONE");
+                Gdx.app.log("INFO", "###############################################");
+                Gdx.app.log("INFO", "NEW STATE stuff begins");
                 break;
+
             }
 
         }
@@ -105,22 +113,29 @@ public class QAgent {
 
 
     private Action getAction() {
-        return actionList.get(random.nextInt(actionList.size()));
+
+        if (epsilon > Math.random()) {
+            System.out.println("making random move");
+            return actionList.get(random.nextInt(actionList.size()));
+        } else {
+            Action bestAction = getBestActionAtState(currentKnownState);
+            return bestAction;
+        }
     }
 
 
     //the robot has detected a change in state. It needs to make a move now.
     public void makeNewMove() {
         action = getAction();
+        Gdx.app.log("INFO", "DOING" + action);
         currentAction = action;
-        System.out.println("the best action is" + chooseBestAction(currentKnownState));
         move();
     }
 
-    public void setq_table(Tile tile) {
+    public void setQ_table(Tile tile) {
         for (Action action : actionList) {
             Pair<Tile, Action> tile_action = new Pair<>(tile, action);
-            q_table.put(tile_action, 0);
+            q_table.put(tile_action, 0.0);
         }
     }
 
@@ -174,7 +189,6 @@ public class QAgent {
 
     public void setCurrentState(Tile tile) {
         currentKnownState = tile;
-
     }
 
     public void resetLocation() {

@@ -31,13 +31,13 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     public static final int SCREEN_HEIGHT = 1200;
     public static final int SCREEN_WIDTH = 1200;
-    public static final int cols = 3;
-    public static final int rows = 3;
+    public static final int cols = 5;
+    public static final int rows = 5;
     public int agentPosOffset = 100;
     public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
-    private BitmapFont font;
+    public BitmapFont font;
     private Tile startState;
 
     public GameScreen(SpriteBatch batch) {
@@ -53,16 +53,17 @@ public class GameScreen implements Screen {
         agent.setCurrentState(board.getTile(0, 0));
         agent.resetPosition(board.getTile(0, 0));
         board.getTile(2, 2).makeFire();
-        board.getTile(1,1).makeGoal();
-        startState = board.getTile(0,0);
+        board.getTile(3,3).makeGoal();
+        startState = board.getTile(0, 0);
     }
 
 
     private void initStateActionPairs() {
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
-                agent.setq_table(tile);
+                agent.setQ_table(tile);
             }
         }
     }
@@ -90,7 +91,9 @@ public class GameScreen implements Screen {
     }
 
     private Boolean agentOutofBounds() {
-        if (agent.getX() > SCREEN_WIDTH || agent.getX() < 0-agent.getWidth() || agent.getY() > SCREEN_HEIGHT || agent.getY() < 0) {
+        if (agent.getX() > SCREEN_WIDTH || agent.getX() < 0 - agent.getWidth() || agent.getY() > SCREEN_HEIGHT ||
+                agent.getY() < 0 - agent.getHeight()
+                ) {
             Gdx.app.log("INFO", "OUT OF BOUNDS!!!!!");
             return true;
         }
@@ -106,9 +109,9 @@ public class GameScreen implements Screen {
 
                 Tile v2 = board.getTile(i, j);
                 Reward r1 = graph.addEdge(v1, v2);
-                graph.setEdgeWeight(r1, 2);
+                graph.setEdgeWeight(r1, 0);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, 2);
+                graph.setEdgeWeight(r2, 0);
                 v1 = v2;
             }
         }
@@ -121,11 +124,24 @@ public class GameScreen implements Screen {
                 Tile v2 = board.getTile(j, i);
                 Reward r1 = graph.addEdge(v1, v2);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, 2);
-                graph.setEdgeWeight(r1, 2);
+                graph.setEdgeWeight(r2, 0);
+                graph.setEdgeWeight(r1, 0);
                 v1 = v2;
             }
         }
+    }
+
+    public Boolean isAgentInFireState() {
+        if (getNewState().getId() == board.getTile(2, 2).getId()) return true;
+        else
+            return false;
+
+    }
+
+    public Boolean isAgentInGoalState() {
+        if (getNewState().getId() == board.getTile(3, 3).getId()) return true;
+        else
+            return false;
     }
 
     private void populateGraph() {
@@ -156,15 +172,15 @@ public class GameScreen implements Screen {
         //replace with fireTile or something
         Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(2, 2));
         for (Reward r : rewards) {
-            graph.setEdgeWeight(r, -20);
+            graph.setEdgeWeight(r, -10);
         }
 
     }
 
     private void setGoalEdges() {
-        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(1,1));
-        for (Reward r: rewards){
-            graph.setEdgeWeight(r,20);
+        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(3, 3));
+        for (Reward r : rewards) {
+            graph.setEdgeWeight(r, 10);
         }
     }
 
@@ -203,7 +219,7 @@ public class GameScreen implements Screen {
         return false;
     }
 
-    public Tile getCurrentState() {
+    public Tile getNewState() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
@@ -228,7 +244,7 @@ public class GameScreen implements Screen {
 
 
     private Boolean changeOfstate() {
-        return detectOverlap() && agent.currentKnownState != getCurrentState() && getCurrentState() != null;
+        return detectOverlap() && agent.currentKnownState != getNewState() && getNewState() != null;
 
     }
 
@@ -276,16 +292,18 @@ public class GameScreen implements Screen {
         }
 
         if (changeOfstate()) {
-            double reward = graph.getEdge(agent.currentKnownState, getCurrentState()).getWeight();
 
-            agent.updateQ_table((int) reward);
+            double reward = graph.getEdge(agent.currentKnownState, getNewState()).getWeight();
+            System.out.println(reward);
 
-            if (getCurrentState() == board.getTile(2,2))
+            agent.updateQ_table((int) reward, getNewState());
+
+            if (isAgentInFireState() || isAgentInGoalState())
                 agent.resetPosition(startState);
 
-            agent.setCurrentState(getCurrentState());
+            agent.setCurrentState(getNewState());
             agent.makeNewMove();
-           // System.out.println(getCurrentState().getId()+"");
+            // System.out.println(getNewState().getId()+"");
 
         } else {
             agent.keepMoving();

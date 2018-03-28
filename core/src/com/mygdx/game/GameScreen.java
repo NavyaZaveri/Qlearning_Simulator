@@ -33,11 +33,12 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 3;
     public static final int rows = 3;
-    public int agentPosOffset  = 100;
+    public int agentPosOffset = 100;
     public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
-    SimpleDirectedWeightedGraph<Tile, Reward> graph;
-    BitmapFont font;
+    private SimpleDirectedWeightedGraph<Tile, Reward> graph;
+    private BitmapFont font;
+    private Tile startState;
 
     public GameScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -52,6 +53,8 @@ public class GameScreen implements Screen {
         agent.setCurrentState(board.getTile(0, 0));
         agent.resetPosition(board.getTile(0, 0));
         board.getTile(2, 2).makeFire();
+        board.getTile(1,1).makeGoal();
+        startState = board.getTile(0,0);
     }
 
 
@@ -87,7 +90,7 @@ public class GameScreen implements Screen {
     }
 
     private Boolean agentOutofBounds() {
-        if (agent.getX() >= SCREEN_WIDTH || agent.getX() <= 0 || agent.getY() >= SCREEN_HEIGHT || agent.getY() <= 0) {
+        if (agent.getX() > SCREEN_WIDTH || agent.getX() < 0-agent.getWidth() || agent.getY() > SCREEN_HEIGHT || agent.getY() < 0) {
             Gdx.app.log("INFO", "OUT OF BOUNDS!!!!!");
             return true;
         }
@@ -103,23 +106,23 @@ public class GameScreen implements Screen {
 
                 Tile v2 = board.getTile(i, j);
                 Reward r1 = graph.addEdge(v1, v2);
-                graph.setEdgeWeight(r1, 20);
+                graph.setEdgeWeight(r1, 2);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, 20);
+                graph.setEdgeWeight(r2, 2);
                 v1 = v2;
             }
         }
     }
 
-    private void setVerticalEges() {
+    private void setVerticalEdges() {
         for (int i = 0; i < cols; i++) {
             Tile v1 = board.getTile(0, i);
             for (int j = 1; j < rows; j++) {
                 Tile v2 = board.getTile(j, i);
                 Reward r1 = graph.addEdge(v1, v2);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, 20);
-                graph.setEdgeWeight(r1, 20);
+                graph.setEdgeWeight(r2, 2);
+                graph.setEdgeWeight(r1, 2);
                 v1 = v2;
             }
         }
@@ -133,7 +136,7 @@ public class GameScreen implements Screen {
             }
         }
         setHorizontalEdges();
-        setVerticalEges();
+        setVerticalEdges();
         setFireEdges();
         setGoalEdges();
     }
@@ -159,7 +162,10 @@ public class GameScreen implements Screen {
     }
 
     private void setGoalEdges() {
-        //TODO
+        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(1,1));
+        for (Reward r: rewards){
+            graph.setEdgeWeight(r,20);
+        }
     }
 
     private void displayBoard() {
@@ -175,7 +181,7 @@ public class GameScreen implements Screen {
                     batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
                 if (tile.isGoal())
-                    batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
+                    batch.draw(tile.getGoalImage(), i * tile.getWidth(), j * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
                 font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
@@ -189,7 +195,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
-                if (tile.getRectangle().contains(agent.pos)) {
+                if (tile.getRectangle().overlaps(agent.pos)) {
                     return true;
                 }
             }
@@ -226,7 +232,7 @@ public class GameScreen implements Screen {
 
     }
 
-    public void makeForcedMove() {
+    private void makeForcedMove() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
@@ -273,8 +279,13 @@ public class GameScreen implements Screen {
             double reward = graph.getEdge(agent.currentKnownState, getCurrentState()).getWeight();
 
             agent.updateQ_table((int) reward);
+
+            if (getCurrentState() == board.getTile(2,2))
+                agent.resetPosition(startState);
+
             agent.setCurrentState(getCurrentState());
             agent.makeNewMove();
+           // System.out.println(getCurrentState().getId()+"");
 
         } else {
             agent.keepMoving();

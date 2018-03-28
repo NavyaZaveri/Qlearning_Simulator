@@ -19,7 +19,7 @@ public class Tile {
     private float centreX;
     private float centreY;
     private String id;
-    public Boolean isFire= false;
+    public Boolean isFire = false;
     private boolean isGoal = false;
 
 
@@ -38,9 +38,13 @@ public class Tile {
         return img;
     }
 
-    public  Texture getFireImage() {return fireImage;}
+    public Texture getFireImage() {
+        return fireImage;
+    }
 
-    public Texture getGoalImage() { return goalImage; }
+    public Texture getGoalImage() {
+        return goalImage;
+    }
 
 
     public String getId() {
@@ -67,16 +71,19 @@ public class Tile {
         return centreY;
     }
 
-    public void makeFire(){
+    public void makeFire() {
         this.isFire = true;
     }
 
-    public void makeGoal(){
+    public void makeGoal() {
         this.isGoal = true;
     }
 
-    public Boolean isFire(){
+    public Boolean isFire() {
         return this.isFire;
     }
-    public Boolean isGoal() { return this.isGoal; }
+
+    public Boolean isGoal() {
+        return this.isGoal;
+    }
 }

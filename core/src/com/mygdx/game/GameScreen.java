@@ -10,10 +10,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.mygdx.game.Agents.*;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -35,14 +37,19 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 5;
     public static final int rows = 5;
-    public int agentPosOffset = 100;
-    public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
+    public int agentPosOffset = 20;
+    public Agent agent = new QlearningAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
     public static BitmapFont font;
     private Tile startState;
     private List<Tile> fireStates = new ArrayList<>();
     private List<Tile> goalStates = new ArrayList<>();
+    private static final double positiveReward = 10;
+    private static final double negativeReward = -10;
+    private static final double neutralReward = 0.0;
+    private Set<Tile> stateTaken = new HashSet<>();
+    
 
     public GameScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -60,13 +67,17 @@ public class GameScreen implements Screen {
         populateGraph();
     }
 
+
     private void generateFire() {
         Tile t1 = board.getTile(2, 2);
         Tile t2 = board.getTile(3, 3);
+        Tile t3 = board.getTile(1,3);
+        t3.makeFire();
         t1.makeFire();
         t2.makeFire();
         fireStates.add(t1);
         fireStates.add(t2);
+        fireStates.add(t3);
 
     }
 
@@ -128,9 +139,9 @@ public class GameScreen implements Screen {
 
                 Tile v2 = board.getTile(i, j);
                 Reward r1 = graph.addEdge(v1, v2);
-                graph.setEdgeWeight(r1, 0);
+                graph.setEdgeWeight(r1, neutralReward);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, 0);
+                graph.setEdgeWeight(r2, neutralReward);
                 v1 = v2;
             }
         }
@@ -153,7 +164,7 @@ public class GameScreen implements Screen {
     public Boolean isAgentInFireState() {
 
         for (Tile tile : fireStates) {
-            if (getNewState().getId() == tile.getId()) return true;
+            if (getNewState().getId().equals(tile.getId())) return true;
         }
         return false;
 
@@ -199,7 +210,7 @@ public class GameScreen implements Screen {
 
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
-                graph.setEdgeWeight(r, -10);
+                graph.setEdgeWeight(r, negativeReward);
             }
         }
 
@@ -211,7 +222,7 @@ public class GameScreen implements Screen {
 
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
-                graph.setEdgeWeight(r, 10);
+                graph.setEdgeWeight(r, positiveReward);
             }
         }
     }
@@ -233,6 +244,8 @@ public class GameScreen implements Screen {
                             tile.getWidth(), tile.getHeight());
 
                 //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
+                Double value  = agent.getBestValueAtState(tile);
+                font.draw(batch,value+"",tile.getCentreX(),tile.getCentreY());
 
             }
         }
@@ -328,7 +341,7 @@ public class GameScreen implements Screen {
             double reward = graph.getEdge(agent.currentKnownState, getNewState()).getWeight();
             System.out.println(reward);
 
-            agent.updateQ_table((int) reward, getNewState());
+            agent.updateQ_table(reward, getNewState());
 
             if (isAgentInFireState() || isAgentInGoalState())
                 agent.resetPosition(startState);

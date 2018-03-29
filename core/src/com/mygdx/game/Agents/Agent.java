@@ -1,20 +1,20 @@
-package com.mygdx.game;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+package com.mygdx.game.Agents;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-
+import com.mygdx.game.Action;
+import com.mygdx.game.Tile;
 
 import org.javatuples.Pair;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
@@ -25,37 +25,37 @@ import static com.mygdx.game.Action.UP;
  * Created by linux on 3/24/18.
  */
 
-public class QAgent {
+public abstract class Agent {
 
-    private List<Action> actionList;
-    private static final float epsilon = 0.1f;
-    private Texture img = new Texture("Robot.png");
-    private Random random = new Random();
-    private Action currentAction;
+    protected List<Action> actionList;
+    protected static final float epsilon = 0.1f;
+    protected Texture img = new Texture("Robot.png");
+    protected Random random = new Random();
+    protected Action currentAction;
     public Tile currentKnownState;
-    private static final float discountFactor = 0.05f;
-    private static final float learningRate = 0.01f;
-    private Map<Pair<Tile, Action>, Double> q_table = new HashMap<>();
+    protected static final float discountFactor = 0.05f;
+    protected static final float learningRate = 0.01f;
+    protected Map<Pair<Tile, Action>, Double> q_table = new HashMap<>();
 
 
-    private float speed = 1000;
+    protected float speed = 1000;
     public Action action;
     public final Rectangle pos;
 
-    public QAgent(int height, int width) {
+    public Agent(int height, int width) {
         pos = new Rectangle();
         actionList = Arrays.asList(Action.class.getEnumConstants());
         pos.height = height;
         pos.width = width;
     }
 
-    protected Double getBestValueAtState(Tile tile) {
+    public Double getBestValueAtState(Tile tile) {
         double max = -100;
         List<Double> values = new ArrayList<>();
 
 
         for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
-            if (entry.getKey().getValue0().getId() == tile.getId()) {
+            if (entry.getKey().getValue0().getId().equals(tile.getId())) {
                 max = Math.max(max, entry.getValue());
             }
         }
@@ -66,8 +66,9 @@ public class QAgent {
         Map<Action, Double> actionToValue = new HashMap<>();
 
         for (Map.Entry<Pair<Tile, Action>, Double> x : q_table.entrySet()) {
+
             if (x.getKey().getValue0().getId()
-                    == tile.getId()) {
+                    .equals(tile.getId())) {
                 actionToValue.put(x.getKey().getValue1(), x.getValue());
             }
         }
@@ -84,42 +85,14 @@ public class QAgent {
         return bestActions.get(random.nextInt(bestActions.size()));
     }
 
+    public abstract void updateQ_table(double reward, Tile newState);
 
-    public void updateQ_table(double reward, Tile newState) {
-
-        for (Pair<Tile, Action> key : q_table.keySet()) {
-            if (key.getValue0().getId() == currentKnownState.getId() && key.getValue1() == currentAction) {
-                /*Gdx.app.log("location+action", key.getValue0().getId() + key.getValue1());
-                Gdx.app.log("previous value:", q_table.get(key) + "");
-                */
-
-                //bellman equation
-                Double oldValue = q_table.get(key);
-                double newValue = reward + discountFactor * getBestValueAtState(newState);
-                System.out.println("get best value at state " + newState.getId() + getBestValueAtState(newState));
-                q_table.put(key, (oldValue + learningRate * (newValue - oldValue)));
-
-
-
-                /*GameScreen.batch.begin();
-                GameScreen.font.draw(GameScreen.batch, oldValue + newValue + "", key.getValue0().getCentreX(), key.getValue0().getCentreY());
-                GameScreen.batch.end();
-                Gdx.app.log("updated state/action:", q_table.get(key) + "");
-                Gdx.app.log("INFO", "UPDATE DONE");
-                Gdx.app.log("INFO", "###############################################");
-                Gdx.app.log("INFO", "NEW STATE stuff begins");*/
-                break;
-            }
-
-        }
-    }
-
-    private Action getRandomAction() {
+    protected Action getRandomAction() {
         return actionList.get(random.nextInt(actionList.size()));
     }
 
 
-    private Action getAction() {
+    protected Action getAction() {
 
         if (epsilon > Math.random()) {
             System.out.println("making random move");

@@ -34,11 +34,11 @@ public class QAgent {
     private Action currentAction;
     public Tile currentKnownState;
     private static final float discountFactor = 0.05f;
-    public static final float learningRate = 0.01f;
+    private static final float learningRate = 0.01f;
     private Map<Pair<Tile, Action>, Double> q_table = new HashMap<>();
 
 
-    private float speed = 1000;
+    private float speed = 2000;
     public Action action;
     public final Rectangle pos;
 
@@ -93,9 +93,12 @@ public class QAgent {
                 Double oldValue = q_table.get(key);
                 double newValue = reward + discountFactor * getBestValueAtState(newState);
                 System.out.println("get best value at state " + newState.getId() + getBestValueAtState(newState));
-                q_table.put(key, (oldValue + newValue));
 
+                q_table.put(key, (oldValue + learningRate * (newValue - oldValue)));
 
+                GameScreen.batch.begin();
+                GameScreen.font.draw(GameScreen.batch, oldValue + newValue + "", key.getValue0().getCentreX(), key.getValue0().getCentreY());
+                GameScreen.batch.end();
                 Gdx.app.log("updated state/action:", q_table.get(key) + "");
                 Gdx.app.log("INFO", "UPDATE DONE");
                 Gdx.app.log("INFO", "###############################################");

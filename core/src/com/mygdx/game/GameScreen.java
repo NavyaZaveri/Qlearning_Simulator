@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,7 +29,7 @@ import static com.mygdx.game.Action.UP;
 
 public class GameScreen implements Screen {
     private Random random;
-    private SpriteBatch batch;
+    public static SpriteBatch batch;
     private OrthographicCamera camera;
     public static final int SCREEN_HEIGHT = 1200;
     public static final int SCREEN_WIDTH = 1200;
@@ -37,8 +39,10 @@ public class GameScreen implements Screen {
     public QAgent agent = new QAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
-    public BitmapFont font;
+    public static BitmapFont font;
     private Tile startState;
+    private List<Tile> fireStates = new ArrayList<>();
+    private List<Tile> goalStates = new ArrayList<>();
 
     public GameScreen(SpriteBatch batch) {
         this.batch = batch;
@@ -46,15 +50,30 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         board = new Board(rows, cols);
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
-        populateGraph();
-        //    showGraph();
         initStateActionPairs();
         setFont();
         agent.setCurrentState(board.getTile(0, 0));
         agent.resetPosition(board.getTile(0, 0));
-        board.getTile(2, 2).makeFire();
-        board.getTile(3,3).makeGoal();
         startState = board.getTile(0, 0);
+        generateFire();
+        generateGoal();
+        populateGraph();
+    }
+
+    private void generateFire() {
+        Tile t1 = board.getTile(2, 2);
+        Tile t2 = board.getTile(3, 3);
+        t1.makeFire();
+        t2.makeFire();
+        fireStates.add(t1);
+        fireStates.add(t2);
+
+    }
+
+    private void generateGoal() {
+        Tile t1 = board.getTile(2, 3);
+        t1.makeGoal();
+        goalStates.add(t1);
     }
 
 
@@ -132,16 +151,20 @@ public class GameScreen implements Screen {
     }
 
     public Boolean isAgentInFireState() {
-        if (getNewState().getId() == board.getTile(2, 2).getId()) return true;
-        else
-            return false;
+
+        for (Tile tile : fireStates) {
+            if (getNewState().getId() == tile.getId()) return true;
+        }
+        return false;
 
     }
 
     public Boolean isAgentInGoalState() {
-        if (getNewState().getId() == board.getTile(3, 3).getId()) return true;
-        else
-            return false;
+
+        for (Tile tile : goalStates) {
+            if (getNewState().getId() == tile.getId()) return true;
+        }
+        return false;
     }
 
     private void populateGraph() {
@@ -170,17 +193,26 @@ public class GameScreen implements Screen {
     private void setFireEdges() {
 
         //replace with fireTile or something
-        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(2, 2));
-        for (Reward r : rewards) {
-            graph.setEdgeWeight(r, -10);
+
+
+        for (Tile tile : fireStates) {
+
+            Set<Reward> rewards = graph.incomingEdgesOf(tile);
+            for (Reward r : rewards) {
+                graph.setEdgeWeight(r, -10);
+            }
         }
 
     }
 
     private void setGoalEdges() {
-        Set<Reward> rewards = graph.incomingEdgesOf(board.getTile(3, 3));
-        for (Reward r : rewards) {
-            graph.setEdgeWeight(r, 10);
+
+        for (Tile tile : goalStates) {
+
+            Set<Reward> rewards = graph.incomingEdgesOf(tile);
+            for (Reward r : rewards) {
+                graph.setEdgeWeight(r, 10);
+            }
         }
     }
 
@@ -200,7 +232,7 @@ public class GameScreen implements Screen {
                     batch.draw(tile.getGoalImage(), i * tile.getWidth(), j * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
-                font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
+                //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
 
             }
         }

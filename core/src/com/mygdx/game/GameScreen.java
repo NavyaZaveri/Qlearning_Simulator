@@ -49,7 +49,7 @@ public class GameScreen implements Screen {
     private static final double negativeReward = -10;
     private static final double neutralReward = 0.0;
     private Set<Tile> stateTaken = new HashSet<>();
-    
+
 
     public GameScreen(SpriteBatch batch) {
         this.batch = batch;

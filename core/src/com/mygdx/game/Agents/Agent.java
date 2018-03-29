@@ -28,9 +28,9 @@ import static com.mygdx.game.Action.UP;
 public abstract class Agent {
 
     protected List<Action> actionList;
-    protected static final float epsilon = 0.1f;
-    protected Texture img = new Texture("Robot.png");
-    protected Random random = new Random();
+    private static final float epsilon = 0.1f;
+    private Texture img = new Texture("Robot.png");
+    private Random random = new Random();
     protected Action currentAction;
     public Tile currentKnownState;
     protected static final float discountFactor = 0.05f;
@@ -38,7 +38,7 @@ public abstract class Agent {
     protected Map<Pair<Tile, Action>, Double> q_table = new HashMap<>();
 
 
-    protected float speed = 1000;
+    private static final float speed = 1000;
     public Action action;
     public final Rectangle pos;
 
@@ -51,7 +51,6 @@ public abstract class Agent {
 
     public Double getBestValueAtState(Tile tile) {
         double max = -100;
-        List<Double> values = new ArrayList<>();
 
 
         for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
@@ -62,7 +61,7 @@ public abstract class Agent {
         return max;
     }
 
-    protected Action getBestActionAtState(Tile tile) {
+    public Action getBestActionAtState(Tile tile) {
         Map<Action, Double> actionToValue = new HashMap<>();
 
         for (Map.Entry<Pair<Tile, Action>, Double> x : q_table.entrySet()) {

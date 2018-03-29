@@ -1,8 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 /**
  * Created by linux on 3/24/18.
  */

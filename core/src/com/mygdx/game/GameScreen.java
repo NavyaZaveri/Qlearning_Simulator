@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -37,7 +36,7 @@ public class GameScreen implements Screen {
     public static final int SCREEN_WIDTH = 1200;
     public static final int cols = 5;
     public static final int rows = 5;
-    public int agentPosOffset = 20;
+    public int agentPosOffset = 50;
     public Agent agent = new QlearningAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
     Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
@@ -71,7 +70,7 @@ public class GameScreen implements Screen {
     private void generateFire() {
         Tile t1 = board.getTile(2, 2);
         Tile t2 = board.getTile(3, 3);
-        Tile t3 = board.getTile(1,3);
+        Tile t3 = board.getTile(1, 3);
         t3.makeFire();
         t1.makeFire();
         t2.makeFire();
@@ -154,14 +153,14 @@ public class GameScreen implements Screen {
                 Tile v2 = board.getTile(j, i);
                 Reward r1 = graph.addEdge(v1, v2);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, 0);
-                graph.setEdgeWeight(r1, 0);
+                graph.setEdgeWeight(r2, neutralReward);
+                graph.setEdgeWeight(r1, neutralReward);
                 v1 = v2;
             }
         }
     }
 
-    public Boolean isAgentInFireState() {
+    private Boolean isAgentInFireState() {
 
         for (Tile tile : fireStates) {
             if (getNewState().getId().equals(tile.getId())) return true;
@@ -170,7 +169,7 @@ public class GameScreen implements Screen {
 
     }
 
-    public Boolean isAgentInGoalState() {
+    private Boolean isAgentInGoalState() {
 
         for (Tile tile : goalStates) {
             if (getNewState().getId() == tile.getId()) return true;
@@ -244,8 +243,8 @@ public class GameScreen implements Screen {
                             tile.getWidth(), tile.getHeight());
 
                 //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
-                Double value  = agent.getBestValueAtState(tile);
-                font.draw(batch,value+"",tile.getCentreX(),tile.getCentreY());
+                Double value = agent.getBestValueAtState(tile);
+                font.draw(batch, value + "", tile.getCentreX(), tile.getCentreY());
 
             }
         }
@@ -264,7 +263,7 @@ public class GameScreen implements Screen {
         return false;
     }
 
-    public Tile getNewState() {
+    private Tile getNewState() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Tile tile = board.getTile(i, j);
@@ -300,7 +299,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
     }
 
-    public void displayGame() {
+    private void displayGame() {
 
         batch.begin();
         displayBoard();

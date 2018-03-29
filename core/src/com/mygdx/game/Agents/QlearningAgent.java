@@ -19,9 +19,7 @@ public class QlearningAgent extends Agent {
     public void updateQ_table(double reward, Tile newState) {
         for (Pair<Tile, Action> key : q_table.keySet()) {
             if (key.getValue0().getId() == currentKnownState.getId() && key.getValue1() == currentAction) {
-                /*Gdx.app.log("location+action", key.getValue0().getId() + key.getValue1());
-                Gdx.app.log("previous value:", q_table.get(key) + "");
-                */
+
 
                 //bellman equation
                 Double oldValue = q_table.get(key);
@@ -30,15 +28,6 @@ public class QlearningAgent extends Agent {
                 q_table.put(key, (oldValue + learningRate * (newValue - oldValue)));
 
 
-
-                /*GameScreen.batch.begin();
-                GameScreen.font.draw(GameScreen.batch, oldValue + newValue + "", key.getValue0().getCentreX(), key.getValue0().getCentreY());
-                GameScreen.batch.end();
-                Gdx.app.log("updated state/action:", q_table.get(key) + "");
-                Gdx.app.log("INFO", "UPDATE DONE");
-                Gdx.app.log("INFO", "###############################################");
-                Gdx.app.log("INFO", "NEW STATE stuff begins");*/
-                break;
             }
 
         }

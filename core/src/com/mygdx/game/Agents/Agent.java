@@ -106,7 +106,7 @@ public abstract class Agent {
     //the robot has detected a change in state. It needs to make a move now.
     public void makeNewMove() {
         action = getAction();
-        Gdx.app.log("INFO", "DOING" + action);
+        Gdx.app.log("INFO", "GOING " + action);
         currentAction = action;
         move();
     }

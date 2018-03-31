@@ -18,7 +18,7 @@ public class QlearningAgent extends Agent {
     @Override
     public void updateQ_table(double reward, Tile newState) {
         for (Pair<Tile, Action> key : q_table.keySet()) {
-            if (key.getValue0().getId() == currentKnownState.getId() && key.getValue1() == currentAction) {
+            if (key.getValue0().getId().equals(currentKnownState.getId()) && key.getValue1() == currentAction) {
 
 
                 //bellman equation
@@ -26,7 +26,7 @@ public class QlearningAgent extends Agent {
                 double newValue = reward + discountFactor * getBestValueAtState(newState);
                 System.out.println("get best value at state " + newState.getId() + getBestValueAtState(newState));
                 q_table.put(key, (oldValue + learningRate * (newValue - oldValue)));
-
+                break;
 
             }
 

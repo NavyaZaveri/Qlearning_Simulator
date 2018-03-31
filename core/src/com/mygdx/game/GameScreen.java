@@ -232,7 +232,7 @@ public class GameScreen implements Screen {
                 Tile tile = board.getTile(i, j);
 
 
-                batch.draw(tile.getTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                batch.draw(tile.getNeutralTileImage(), i * tile.getWidth(), j * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
 
                 if (tile.isFire())

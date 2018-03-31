@@ -8,6 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by linux on 3/24/18.
  */
+enum State {
+    FIRE,
+    NEUTRAL,
+    GOAL;
+}
 
 public class Tile {
 
@@ -19,8 +24,7 @@ public class Tile {
     private float centreX;
     private float centreY;
     private String id;
-    public Boolean isFire = false;
-    private boolean isGoal = false;
+    private State state;
 
 
     public Tile(int height, int width, int i, int j) {
@@ -31,10 +35,11 @@ public class Tile {
         id = "[" + i + "," + j + "]";
         centreX = tile.x + width / 2;
         centreY = tile.y + height / 2;
+        state = State.NEUTRAL;
 
     }
 
-    public Texture getTileImage() {
+    public Texture getNeutralTileImage() {
         return img;
     }
 
@@ -45,7 +50,6 @@ public class Tile {
     public Texture getGoalImage() {
         return goalImage;
     }
-
 
     public String getId() {
         return this.id;
@@ -72,18 +76,22 @@ public class Tile {
     }
 
     public void makeFire() {
-        this.isFire = true;
+        state = State.FIRE;
     }
 
     public void makeGoal() {
-        this.isGoal = true;
+        state = State.GOAL;
+    }
+
+    public void makeNeutral() {
+        state = State.NEUTRAL;
     }
 
     public Boolean isFire() {
-        return this.isFire;
+        return state == State.FIRE;
     }
 
     public Boolean isGoal() {
-        return this.isGoal;
+        return state == State.GOAL;
     }
 }

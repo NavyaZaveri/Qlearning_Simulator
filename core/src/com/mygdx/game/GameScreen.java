@@ -54,7 +54,7 @@ public class GameScreen implements Screen {
         this.batch = batch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
-        board = new Board(rows, cols);
+        this.board = new Board(rows,cols);
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
         initStateActionPairs();
         setFont();

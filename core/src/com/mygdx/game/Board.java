@@ -16,8 +16,8 @@ public class Board {
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
-        this.tileWidth = GameScreen.SCREEN_WIDTH / rows;
-        this.tileHeight = GameScreen.SCREEN_HEIGHT / columns;
+        this.tileWidth = GameScreen.SCREEN_WIDTH / columns;
+        this.tileHeight = GameScreen.SCREEN_HEIGHT / rows;
         board = new Tile[rows][columns];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {

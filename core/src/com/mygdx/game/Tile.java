@@ -30,8 +30,8 @@ public class Tile {
     public Tile(int height, int width, int i, int j) {
         tile.height = height;
         tile.width = width;
-        tile.x = i * width;
-        tile.y = j * height;
+        tile.x = j * width;
+        tile.y = i * height;
         id = "[" + i + "," + j + "]";
         centreX = tile.x + width / 2;
         centreY = tile.y + height / 2;

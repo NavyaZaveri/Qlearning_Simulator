@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.mygdx.game.Constants.COLUMNS;
+import static com.mygdx.game.Constants.ROWS;
 
 /**
  * Created by linux on 3/31/18.
@@ -36,10 +40,10 @@ public class GameSetter implements Screen {
 
         camera = new OrthographicCamera(1200, 1200);
         camera.setToOrtho(false, 1200, 1200);
-        board = new Board(5, 5);
+        board = new Board(ROWS, COLUMNS);
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
-        font = new BitmapFont();
+        setFont();
         font.setColor(Color.BLUE);
         mousePos = new Vector3();
 
@@ -59,8 +63,8 @@ public class GameSetter implements Screen {
     }
 
     public Set<Tile> getGoalStates() {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.isGoal()) {
                     this.goalStates.add(tile);
@@ -72,8 +76,8 @@ public class GameSetter implements Screen {
     }
 
     public Set<Tile> getFireStates() {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.isFire()) {
                     this.fireStates.add(tile);
@@ -117,8 +121,8 @@ public class GameSetter implements Screen {
     }
 
     private Tile detectTile(float x, float y) {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 if (board.getTile(i, j).getRectangle().contains(x, y)) {
                     System.out.println(board.getTile(i, j).getId());
                     return board.getTile(i, j);
@@ -128,24 +132,32 @@ public class GameSetter implements Screen {
         }
         return null;
     }
+    private void setFont() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 40;
+        font = generator.generateFont(parameter);
+        font.setColor(Color.BLACK);// font size 12 pixels
+        generator.dispose();
+    }
 
 
     private void displayBoard() {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
 
-                batch.draw(tile.getNeutralTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                batch.draw(tile.getNeutralTileImage(), j * tile.getWidth(), i * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
 
                 if (tile.isFire())
-                    batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
+                    batch.draw(tile.getFireImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
                 if (tile.isGoal())
-                    batch.draw(tile.getGoalImage(), i * tile.getWidth(), j * tile.getHeight(),
+                    batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
-                font.draw(batch, tile.getCentreX() + "", tile.getCentreX(), tile.getCentreY());
+                font.draw(batch, tile.getId(),tile.getCentreX(),tile.getCentreY());
 
 
             }

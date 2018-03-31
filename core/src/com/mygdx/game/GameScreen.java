@@ -24,6 +24,7 @@ import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
 import static com.mygdx.game.Action.RIGHT;
 import static com.mygdx.game.Action.UP;
+import static com.mygdx.game.Constants.*;
 
 /**
  * Created by linux on 3/24/18.
@@ -35,10 +36,8 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     public static final int SCREEN_HEIGHT = 1200;
     public static final int SCREEN_WIDTH = 1200;
-    public static final int cols = 5;
-    public static final int rows = 5;
     public int agentPosOffset = 50;
-    public Agent agent = new QlearningAgent(SCREEN_HEIGHT / cols - agentPosOffset, SCREEN_WIDTH / rows - agentPosOffset);
+    public Agent agent = new QlearningAgent(SCREEN_HEIGHT / ROWS - agentPosOffset, SCREEN_WIDTH / COLUMNS - agentPosOffset);
     Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
     public static BitmapFont font;
@@ -64,37 +63,15 @@ public class GameScreen implements Screen {
         agent.setCurrentState(board.getTile(0, 0));
         agent.resetPosition(board.getTile(0, 0));
         startState = board.getTile(0, 0);
-       // generateFire();
-        //generateGoal();
         populateGraph();
         showGraph();
     }
 
 
-    private void generateFire() {
-        Tile t1 = board.getTile(2, 2);
-        Tile t2 = board.getTile(3, 3);
-        Tile t3 = board.getTile(1, 3);
-        t3.makeFire();
-        t1.makeFire();
-        t2.makeFire();
-        fireStates.add(t1);
-        fireStates.add(t2);
-        fireStates.add(t3);
-
-    }
-
-    private void generateGoal() {
-        Tile t1 = board.getTile(2, 3);
-        t1.makeGoal();
-        goalStates.add(t1);
-    }
-
-
     private void initStateActionPairs() {
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
                 agent.setQ_table(tile);
             }
@@ -136,9 +113,9 @@ public class GameScreen implements Screen {
 
 
     private void setHorizontalEdges() {
-        for (int i = 0; i < rows; i++) {
+        for (int i = 0; i < ROWS; i++) {
             Tile v1 = board.getTile(i, 0);
-            for (int j = 1; j < cols; j++) {
+            for (int j = 1; j < COLUMNS; j++) {
 
                 Tile v2 = board.getTile(i, j);
                 Reward r1 = graph.addEdge(v1, v2);
@@ -151,9 +128,9 @@ public class GameScreen implements Screen {
     }
 
     private void setVerticalEdges() {
-        for (int i = 0; i < cols; i++) {
+        for (int i = 0; i < COLUMNS; i++) {
             Tile v1 = board.getTile(0, i);
-            for (int j = 1; j < rows; j++) {
+            for (int j = 1; j < ROWS; j++) {
                 Tile v2 = board.getTile(j, i);
                 Reward r1 = graph.addEdge(v1, v2);
                 Reward r2 = graph.addEdge(v2, v1);
@@ -189,8 +166,8 @@ public class GameScreen implements Screen {
     }
 
     private void populateGraph() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
                 graph.addVertex(tile);
             }
@@ -240,19 +217,19 @@ public class GameScreen implements Screen {
     }
 
     private void displayBoard() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
 
 
-                batch.draw(tile.getNeutralTileImage(), i * tile.getWidth(), j * tile.getHeight(),
+                batch.draw(tile.getNeutralTileImage(), j * tile.getWidth(), i * tile.getHeight(),
                         tile.getWidth(), tile.getHeight());
 
                 if (tile.isFire())
-                    batch.draw(tile.getFireImage(), i * tile.getWidth(), j * tile.getHeight(),
+                    batch.draw(tile.getFireImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
                 if (tile.isGoal())
-                    batch.draw(tile.getGoalImage(), i * tile.getWidth(), j * tile.getHeight(),
+                    batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
                 //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
@@ -265,8 +242,8 @@ public class GameScreen implements Screen {
 
 
     private Boolean detectOverlap() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.getRectangle().overlaps(agent.pos)) {
                     return true;
@@ -277,8 +254,8 @@ public class GameScreen implements Screen {
     }
 
     private Tile getNewState() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
                 if (tile.getRectangle().contains(agent.pos)) {
                     return tile;

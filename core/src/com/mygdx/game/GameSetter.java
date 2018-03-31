@@ -11,6 +11,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by linux on 3/31/18.
  */
@@ -19,12 +23,17 @@ public class GameSetter implements Screen {
 
     private OrthographicCamera camera;
     private Vector3 v;
+    private Set<Tile> goalStates;
+    private Set<Tile> fireStates;
     Board board;
     SpriteBatch batch;
     BitmapFont font;
     Vector3 mousePos;
+    Boolean finishedSetup = false;
+    GameScreen g;
 
     public GameSetter() {
+
         camera = new OrthographicCamera(1200, 1200);
         camera.setToOrtho(false, 1200, 1200);
         board = new Board(5, 5);
@@ -33,6 +42,9 @@ public class GameSetter implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLUE);
         mousePos = new Vector3();
+
+        goalStates = new HashSet<>();
+        fireStates = new HashSet<>();
     }
 
     private void toggle(Tile tile) {
@@ -46,12 +58,48 @@ public class GameSetter implements Screen {
         }
     }
 
+    public Set<Tile> getGoalStates() {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                Tile tile = board.getTile(i, j);
+                if (tile.isGoal()) {
+                    this.goalStates.add(tile);
+                }
 
-    public void render() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) System.out.println("pressed");
+            }
+        }
+        return Collections.unmodifiableSet(this.goalStates);
+    }
 
+    public Set<Tile> getFireStates() {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                Tile tile = board.getTile(i, j);
+                if (tile.isFire()) {
+                    this.fireStates.add(tile);
+                }
+
+            }
+        }
+        return Collections.unmodifiableSet(this.fireStates);
+
+    }
+
+    @Override
+    public void render(float delta) {
+        if (finishedSetup) {
+            g.render(delta);
+            return;
+        }
         camera.update();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            getFireStates();
+            getGoalStates();
+            g = new GameScreen(batch, this.board,goalStates,fireStates);
+            finishedSetup = true;
+        }
+
         batch.begin();
         displayBoard();
         batch.end();
@@ -110,11 +158,6 @@ public class GameSetter implements Screen {
 
     }
 
-    @Override
-    public void render(float delta) {
-
-
-    }
 
     @Override
     public void resize(int width, int height) {

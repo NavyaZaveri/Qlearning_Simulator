@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.mygdx.game.Action.DOWN;
 import static com.mygdx.game.Action.LEFT;
@@ -50,20 +51,23 @@ public class GameScreen implements Screen {
     private Set<Tile> stateTaken = new HashSet<>();
 
 
-    public GameScreen(SpriteBatch batch) {
+    public GameScreen(SpriteBatch batch, Board board, Set<Tile> goalStates, Set<Tile> fireStates) {
         this.batch = batch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
-        this.board = new Board(rows,cols);
+        this.board = board;
+        this.goalStates.addAll(goalStates);
+        this.fireStates.addAll(fireStates);
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
         initStateActionPairs();
         setFont();
         agent.setCurrentState(board.getTile(0, 0));
         agent.resetPosition(board.getTile(0, 0));
         startState = board.getTile(0, 0);
-        generateFire();
-        generateGoal();
+       // generateFire();
+        //generateGoal();
         populateGraph();
+        showGraph();
     }
 
 
@@ -112,8 +116,8 @@ public class GameScreen implements Screen {
             System.out.println(v1.getId());
             Gdx.app.log("info", "vertex");
             for (Reward r : graph.outgoingEdgesOf(v1)) {
-                //System.out.println("neighbor");
-                //System.out.println(graph.getEdgeTarget(r).getId());
+                System.out.println("neighbor");
+                System.out.println(graph.getEdgeTarget(r).getId());
             }
             System.out.println("                ");
         }
@@ -163,16 +167,23 @@ public class GameScreen implements Screen {
     private Boolean isAgentInFireState() {
 
         for (Tile tile : fireStates) {
-            if (getNewState().getId().equals(tile.getId())) return true;
+            if (getNewState().isFire()) {
+                System.out.println("detected fireeeee");
+                return true;
+            }
         }
         return false;
-
     }
+
+
+
 
     private Boolean isAgentInGoalState() {
 
         for (Tile tile : goalStates) {
-            if (getNewState().getId() == tile.getId()) return true;
+            if (getNewState().isGoal()) {
+                return true;
+            }
         }
         return false;
     }
@@ -209,6 +220,7 @@ public class GameScreen implements Screen {
 
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
+                System.out.println("fire "+tile.getId());
                 graph.setEdgeWeight(r, negativeReward);
             }
         }
@@ -222,6 +234,7 @@ public class GameScreen implements Screen {
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
                 graph.setEdgeWeight(r, positiveReward);
+                System.out.println("goal"+tile.getId());
             }
         }
     }
@@ -244,7 +257,7 @@ public class GameScreen implements Screen {
 
                 //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
                 Double value = agent.getBestValueAtState(tile);
-                font.draw(batch, value + "", tile.getCentreX(), tile.getCentreY());
+                font.draw(batch, value+"",tile.getCentreX(),tile.getCentreY());
 
             }
         }
@@ -278,7 +291,8 @@ public class GameScreen implements Screen {
 
 
     private void displayRobot() {
-        batch.draw(agent.getImage(), agent.getX(), agent.getY(), agent.getWidth(), agent.getHeight());
+        batch.draw(agent.getImage(), agent.getX(),
+                agent.getY(), agent.getWidth(), agent.getHeight());
     }
 
     @Override

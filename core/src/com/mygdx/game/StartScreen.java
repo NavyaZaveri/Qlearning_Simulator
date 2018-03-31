@@ -24,18 +24,20 @@ public class StartScreen extends Game {
 
     @Override
     public void render() {
-        if (gameStarted)
+        if (gameStarted) {
+            // System.out.println("wtffff");
             super.render();
 
-        else {
-            if (Gdx.input.isTouched()) {
-                super.setScreen(new GameSetter());
-                gameStarted = true;
+        } else if (Gdx.input.isTouched()) {
+            super.setScreen(new GameSetter());
+            gameStarted = true;
 
-            }
+        }
+        else {
             batch.begin();
-            font.draw(batch,"Weclome! click anywhere to beign",200,200);
+            font.draw(batch, "Weclome! click anywhere to beign", 200, 200);
             batch.end();
         }
     }
 }
+

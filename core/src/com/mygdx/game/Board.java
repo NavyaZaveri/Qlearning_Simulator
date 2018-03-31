@@ -4,6 +4,8 @@ package com.mygdx.game;
  * Created by linux on 3/24/18.
  */
 
+//TODO: IMPLEMENT ITERATOR!!!!
+
 public class Board {
     public static int rows;
     public static int columns;

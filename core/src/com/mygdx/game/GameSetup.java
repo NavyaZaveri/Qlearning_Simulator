@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -16,17 +15,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.mygdx.game.Constants.COLUMNS;
-import static com.mygdx.game.Constants.ROWS;
+import static com.mygdx.game.Utils.Constants.COLUMNS;
+import static com.mygdx.game.Utils.Constants.ROWS;
 
 /**
  * Created by linux on 3/31/18.
  */
 
-public class GameSetter implements Screen {
+public class GameSetup implements Screen {
 
     private OrthographicCamera camera;
-    private Vector3 v;
     private Set<Tile> goalStates;
     private Set<Tile> fireStates;
     Board board;
@@ -36,7 +34,7 @@ public class GameSetter implements Screen {
     Boolean finishedSetup = false;
     GameScreen g;
 
-    public GameSetter() {
+    public GameSetup() {
 
         camera = new OrthographicCamera(1200, 1200);
         camera.setToOrtho(false, 1200, 1200);
@@ -163,7 +161,6 @@ public class GameSetter implements Screen {
             }
         }
     }
-
 
     @Override
     public void show() {

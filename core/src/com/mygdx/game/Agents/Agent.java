@@ -3,7 +3,7 @@ package com.mygdx.game.Agents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.game.Action;
+import com.mygdx.game.Utils.Action;
 import com.mygdx.game.Tile;
 
 import org.javatuples.Pair;
@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.mygdx.game.Action.DOWN;
-import static com.mygdx.game.Action.LEFT;
-import static com.mygdx.game.Action.RIGHT;
-import static com.mygdx.game.Action.UP;
+import static com.mygdx.game.Utils.Action.DOWN;
+import static com.mygdx.game.Utils.Action.LEFT;
+import static com.mygdx.game.Utils.Action.RIGHT;
+import static com.mygdx.game.Utils.Action.UP;
 
 /**
  * Created by linux on 3/24/18.
@@ -42,7 +42,7 @@ public abstract class Agent {
     public Action action;
     public final Rectangle pos;
 
-    public Agent(int height, int width) {
+    public Agent(float height, float width) {
         pos = new Rectangle();
         actionList = Arrays.asList(Action.class.getEnumConstants());
         pos.height = height;

@@ -29,7 +29,7 @@ public class StartScreen extends Game {
             super.render();
 
         } else if (Gdx.input.isTouched()) {
-            super.setScreen(new GameSetter());
+            super.setScreen(new GameSetup());
             gameStarted = true;
 
         }

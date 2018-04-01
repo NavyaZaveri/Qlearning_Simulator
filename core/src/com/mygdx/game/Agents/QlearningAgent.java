@@ -1,6 +1,6 @@
 package com.mygdx.game.Agents;
 
-import com.mygdx.game.Action;
+import com.mygdx.game.Utils.Action;
 import com.mygdx.game.Tile;
 
 import org.javatuples.Pair;
@@ -11,7 +11,7 @@ import org.javatuples.Pair;
 
 public class QlearningAgent extends Agent {
 
-    public QlearningAgent(int height, int width) {
+    public QlearningAgent(float height, float width) {
         super(height, width);
     }
 

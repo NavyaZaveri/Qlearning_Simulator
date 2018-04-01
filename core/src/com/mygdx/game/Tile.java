@@ -27,7 +27,7 @@ public class Tile {
     private State state;
 
 
-    public Tile(int height, int width, int i, int j) {
+    public Tile(float height, float width, int i, int j) {
         tile.height = height;
         tile.width = width;
         tile.x = j * width;
@@ -35,6 +35,8 @@ public class Tile {
         id = "[" + i + "," + j + "]";
         centreX = tile.x + width / 2;
         centreY = tile.y + height / 2;
+
+        //default state
         state = State.NEUTRAL;
 
     }
@@ -94,4 +96,9 @@ public class Tile {
     public Boolean isGoal() {
         return state == State.GOAL;
     }
+
+    public Boolean isNeutral() {
+        return state == State.NEUTRAL;
+    }
+
 }

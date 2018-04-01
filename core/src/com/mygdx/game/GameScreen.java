@@ -18,13 +18,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.mygdx.game.Action.DOWN;
-import static com.mygdx.game.Action.LEFT;
-import static com.mygdx.game.Action.RIGHT;
-import static com.mygdx.game.Action.UP;
-import static com.mygdx.game.Constants.*;
+import static com.mygdx.game.Utils.Action.DOWN;
+import static com.mygdx.game.Utils.Action.LEFT;
+import static com.mygdx.game.Utils.Action.RIGHT;
+import static com.mygdx.game.Utils.Action.UP;
+import static com.mygdx.game.Utils.Constants.*;
 
 /**
  * Created by linux on 3/24/18.
@@ -32,25 +31,19 @@ import static com.mygdx.game.Constants.*;
 
 public class GameScreen implements Screen {
     private Random random;
-    public static SpriteBatch batch;
+    public SpriteBatch batch;
     private OrthographicCamera camera;
-    public static final int SCREEN_HEIGHT = 1200;
-    public static final int SCREEN_WIDTH = 1200;
     public int agentPosOffset = 50;
-    public Agent agent = new QlearningAgent(SCREEN_HEIGHT / ROWS - agentPosOffset, SCREEN_WIDTH / COLUMNS - agentPosOffset);
-    Board board;
+    public Agent agent;
+    private Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
     public static BitmapFont font;
     private Tile startState;
     private List<Tile> fireStates = new ArrayList<>();
     private List<Tile> goalStates = new ArrayList<>();
-    private static final double positiveReward = 10;
-    private static final double negativeReward = -10;
-    private static final double neutralReward = 0.0;
-    private Set<Tile> stateTaken = new HashSet<>();
-
 
     public GameScreen(SpriteBatch batch, Board board, Set<Tile> goalStates, Set<Tile> fireStates) {
+        agent = new QlearningAgent(SCREEN_HEIGHT / ROWS - agentPosOffset, SCREEN_WIDTH / COLUMNS - agentPosOffset);
         this.batch = batch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -101,14 +94,15 @@ public class GameScreen implements Screen {
     }
 
     private Boolean agentOutofBounds() {
-        if (agent.getX() > SCREEN_WIDTH || agent.getX() < 0 - agent.getWidth() || agent.getY() > SCREEN_HEIGHT ||
+        if (agent.getX() > SCREEN_WIDTH ||
+                agent.getX() < 0 - agent.getWidth() ||
+                agent.getY() > SCREEN_HEIGHT ||
                 agent.getY() < 0 - agent.getHeight()
                 ) {
             Gdx.app.log("INFO", "OUT OF BOUNDS!!!!!");
             return true;
         }
         return false;
-
     }
 
 
@@ -119,9 +113,9 @@ public class GameScreen implements Screen {
 
                 Tile v2 = board.getTile(i, j);
                 Reward r1 = graph.addEdge(v1, v2);
-                graph.setEdgeWeight(r1, neutralReward);
+                graph.setEdgeWeight(r1, NEUTRAL_REWARD);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, neutralReward);
+                graph.setEdgeWeight(r2, NEUTRAL_REWARD);
                 v1 = v2;
             }
         }
@@ -134,8 +128,8 @@ public class GameScreen implements Screen {
                 Tile v2 = board.getTile(j, i);
                 Reward r1 = graph.addEdge(v1, v2);
                 Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, neutralReward);
-                graph.setEdgeWeight(r1, neutralReward);
+                graph.setEdgeWeight(r2, NEUTRAL_REWARD);
+                graph.setEdgeWeight(r1, NEUTRAL_REWARD);
                 v1 = v2;
             }
         }
@@ -151,8 +145,6 @@ public class GameScreen implements Screen {
         }
         return false;
     }
-
-
 
 
     private Boolean isAgentInGoalState() {
@@ -197,8 +189,8 @@ public class GameScreen implements Screen {
 
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
-                System.out.println("fire "+tile.getId());
-                graph.setEdgeWeight(r, negativeReward);
+                System.out.println("fire " + tile.getId());
+                graph.setEdgeWeight(r, NEGATIVE_REWARD);
             }
         }
 
@@ -210,8 +202,8 @@ public class GameScreen implements Screen {
 
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
-                graph.setEdgeWeight(r, positiveReward);
-                System.out.println("goal"+tile.getId());
+                graph.setEdgeWeight(r, POSITIVE_REWARD);
+                System.out.println("goal" + tile.getId());
             }
         }
     }
@@ -234,7 +226,7 @@ public class GameScreen implements Screen {
 
                 //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
                 Double value = agent.getBestValueAtState(tile);
-                font.draw(batch, value+"",tile.getCentreX(),tile.getCentreY());
+                font.draw(batch, value + "", tile.getCentreX(), tile.getCentreY());
 
             }
         }
@@ -338,7 +330,6 @@ public class GameScreen implements Screen {
 
             agent.setCurrentState(getNewState());
             agent.makeNewMove();
-            // System.out.println(getNewState().getId()+"");
 
         } else {
             agent.keepMoving();

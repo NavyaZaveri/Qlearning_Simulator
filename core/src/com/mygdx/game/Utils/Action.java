@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.Utils;
 
 /**
  * Created by linux on 3/24/18.

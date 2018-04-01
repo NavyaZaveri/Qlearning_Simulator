@@ -20,7 +20,7 @@ public class Tile {
     public static final Texture fireImage = new Texture(Gdx.files.internal("fire.png"));
     public static final Texture goalImage = new Texture(Gdx.files.internal("water.png"));
 
-    private Rectangle tile = new Rectangle();
+    private Rectangle tile;
     private float centreX;
     private float centreY;
     private String id;
@@ -28,6 +28,7 @@ public class Tile {
 
 
     public Tile(float height, float width, int i, int j) {
+        tile = new Rectangle();
         tile.height = height;
         tile.width = width;
         tile.x = j * width;

@@ -17,6 +17,8 @@ import java.util.Set;
 
 import static com.mygdx.game.Utils.Constants.COLUMNS;
 import static com.mygdx.game.Utils.Constants.ROWS;
+import static com.mygdx.game.Utils.Constants.SCREEN_HEIGHT;
+import static com.mygdx.game.Utils.Constants.SCREEN_WIDTH;
 
 /**
  * Created by linux on 3/31/18.
@@ -36,22 +38,21 @@ public class GameSetup implements Screen {
 
     public GameSetup() {
 
-        camera = new OrthographicCamera(1200, 1200);
-        camera.setToOrtho(false, 1200, 1200);
+        camera = new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT);
+        camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         board = new Board(ROWS, COLUMNS);
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
         setFont();
         font.setColor(Color.BLUE);
         mousePos = new Vector3();
-
         goalStates = new HashSet<>();
         fireStates = new HashSet<>();
     }
 
     private void toggle(Tile tile) {
 
-        if (!tile.isGoal() && !tile.isFire()) {
+        if (tile.isNeutral()) {
             tile.makeFire();
         } else if (tile.isFire()) {
             tile.makeGoal();
@@ -73,7 +74,7 @@ public class GameSetup implements Screen {
         return Collections.unmodifiableSet(this.goalStates);
     }
 
-    public Set<Tile> getFireStates() {
+    private Set<Tile> getFireStates() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
@@ -87,6 +88,7 @@ public class GameSetup implements Screen {
 
     }
 
+
     @Override
     public void render(float delta) {
         if (finishedSetup) {
@@ -98,9 +100,10 @@ public class GameSetup implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             getFireStates();
             getGoalStates();
-            g = new GameScreen(batch, this.board,goalStates,fireStates);
+            g = new GameScreen(batch, this.board, this.goalStates, this.fireStates);
             finishedSetup = true;
         }
+
 
         batch.begin();
         displayBoard();
@@ -112,11 +115,9 @@ public class GameSetup implements Screen {
             Tile t = detectTile(mousePos.x, mousePos.y);
             System.out.println("x cord is" + mousePos.x);
             toggle(t);
-            batch.begin();
-            font.draw(batch, "wooooo", mousePos.x, mousePos.y);
-            batch.end();
         }
     }
+
 
     private Tile detectTile(float x, float y) {
         for (int i = 0; i < ROWS; i++) {
@@ -130,6 +131,7 @@ public class GameSetup implements Screen {
         }
         return null;
     }
+
     private void setFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -155,7 +157,7 @@ public class GameSetup implements Screen {
                     batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
-                font.draw(batch, tile.getId(),tile.getCentreX(),tile.getCentreY());
+                font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
 
 
             }

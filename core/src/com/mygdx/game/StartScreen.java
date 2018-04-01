@@ -25,7 +25,6 @@ public class StartScreen extends Game {
     @Override
     public void render() {
         if (gameStarted) {
-            // System.out.println("wtffff");
             super.render();
 
         } else if (Gdx.input.isTouched()) {

@@ -30,14 +30,13 @@ import static com.mygdx.game.Utils.Constants.*;
  */
 
 public class GameScreen implements Screen {
-    private Random random;
-    public SpriteBatch batch;
+    private SpriteBatch batch;
     private OrthographicCamera camera;
-    public int agentPosOffset = 50;
+    private int agentPosOffset = 50;
     public Agent agent;
     private Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
-    public static BitmapFont font;
+    private static BitmapFont font;
     private Tile startState;
     private List<Tile> fireStates = new ArrayList<>();
     private List<Tile> goalStates = new ArrayList<>();
@@ -57,7 +56,7 @@ public class GameScreen implements Screen {
         agent.resetPosition(board.getTile(0, 0));
         startState = board.getTile(0, 0);
         populateGraph();
-        showGraph();
+        // showGraph();
     }
 
 
@@ -93,7 +92,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    private Boolean agentOutofBounds() {
+    private Boolean agentOutOfBounds() {
         if (agent.getX() > SCREEN_WIDTH ||
                 agent.getX() < 0 - agent.getWidth() ||
                 agent.getY() > SCREEN_HEIGHT ||
@@ -112,13 +111,17 @@ public class GameScreen implements Screen {
             for (int j = 1; j < COLUMNS; j++) {
 
                 Tile v2 = board.getTile(i, j);
-                Reward r1 = graph.addEdge(v1, v2);
-                graph.setEdgeWeight(r1, NEUTRAL_REWARD);
-                Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, NEUTRAL_REWARD);
+                setEdge(v1, v2, NEUTRAL_REWARD);
+                setEdge(v2, v1, NEUTRAL_REWARD);
                 v1 = v2;
             }
         }
+    }
+
+    private void setEdge(Tile v1, Tile v2, float rewardValue) {
+        Reward r = graph.addEdge(v1, v2);
+        graph.setEdgeWeight(r, rewardValue);
+
     }
 
     private void setVerticalEdges() {
@@ -126,10 +129,8 @@ public class GameScreen implements Screen {
             Tile v1 = board.getTile(0, i);
             for (int j = 1; j < ROWS; j++) {
                 Tile v2 = board.getTile(j, i);
-                Reward r1 = graph.addEdge(v1, v2);
-                Reward r2 = graph.addEdge(v2, v1);
-                graph.setEdgeWeight(r2, NEUTRAL_REWARD);
-                graph.setEdgeWeight(r1, NEUTRAL_REWARD);
+                setEdge(v1, v2, NEUTRAL_REWARD);
+                setEdge(v2, v1, NEUTRAL_REWARD);
                 v1 = v2;
             }
         }
@@ -175,15 +176,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
-
-    private void resetAgentPosition() {
-
-    }
-
     private void setFireEdges() {
-
-        //replace with fireTile or something
-
 
         for (Tile tile : fireStates) {
 
@@ -312,7 +305,7 @@ public class GameScreen implements Screen {
         makeForcedMove();
 
 
-        if (agentOutofBounds()) {
+        if (agentOutOfBounds()) {
             agent.resetPosition(agent.currentKnownState);
             agent.makeNewMove();
             return;

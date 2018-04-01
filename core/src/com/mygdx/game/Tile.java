@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Utils.TextureUtils;
 
 /**
  * Created by linux on 3/24/18.
@@ -16,9 +17,9 @@ enum State {
 
 public class Tile {
 
-    public static final Texture img = new Texture(Gdx.files.internal("squre_tile.png"));
-    public static final Texture fireImage = new Texture(Gdx.files.internal("fire.png"));
-    public static final Texture goalImage = new Texture(Gdx.files.internal("water.png"));
+    public static final Texture img = TextureUtils.getInstance().getNeutralTileImage();
+    public static final Texture fireImage = TextureUtils.getInstance().getFireImage();
+    public static final Texture goalImage = TextureUtils.getInstance().getGoalImage();
 
     private Rectangle tile;
     private float centreX;

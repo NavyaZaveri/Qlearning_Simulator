@@ -14,9 +14,7 @@ import com.mygdx.game.Agents.*;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static com.mygdx.game.Utils.Action.DOWN;

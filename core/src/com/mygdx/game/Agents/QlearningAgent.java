@@ -24,6 +24,7 @@ public class QlearningAgent extends Agent {
                 //bellman equation
                 Double oldValue = q_table.get(key);
                 double newValue = reward + discountFactor * getBestValueAtState(newState);
+
                 System.out.println("get best value at state " + newState.getId() + getBestValueAtState(newState));
                 q_table.put(key, (oldValue + learningRate * (newValue - oldValue)));
                 break;

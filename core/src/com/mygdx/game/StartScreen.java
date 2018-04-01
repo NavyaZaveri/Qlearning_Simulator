@@ -34,7 +34,7 @@ public class StartScreen extends Game {
         }
         else {
             batch.begin();
-            font.draw(batch, "Weclome! click anywhere to beign", 200, 200);
+            font.draw(batch, "Weclome! Click anywhere to beign", 200, 200);
             batch.end();
         }
     }

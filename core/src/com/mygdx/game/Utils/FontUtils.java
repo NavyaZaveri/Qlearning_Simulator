@@ -19,7 +19,7 @@ public final class FontUtils {
         setFont();
     }
 
-    public void setFont() {
+    private void setFont() {
         generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
     }
@@ -29,6 +29,7 @@ public final class FontUtils {
         if (instance == null) {
             instance = new FontUtils();
         }
+
         return instance;
     }
 

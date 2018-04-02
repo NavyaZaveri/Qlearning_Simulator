@@ -54,15 +54,13 @@ public class GameScreen implements Screen {
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
 
         initStateActionPairs();
-        startState = board.getTile(0, 0);
-        agent.setCurrentState(board.getTile(0, 0));
-        agent.resetPosition(board.getTile(0, 0));
         populateGraph();
+        startState = board.getStartState();
+
+        agent.setCurrentState(startState);
+        agent.resetPosition(startState.getCentreX(),startState.getCentreY());
     }
 
-    private void initAgentStartPosition(Tile startState) {
-
-    }
 
 
     private void initStateActionPairs() {
@@ -257,7 +255,9 @@ public class GameScreen implements Screen {
 
         //edge case (ha!): goes back to previous position and makes a new move if the agent moves out of screen
         if (agentOutOfBounds()) {
-            agent.resetPosition(agent.currentKnownState);
+            agent.resetPosition(agent.currentKnownState.getCentreX(),
+                    agent.currentKnownState.getCentreY());
+
             agent.makeNewMove();
             return;
         }
@@ -270,7 +270,7 @@ public class GameScreen implements Screen {
             agent.updateQ_table(reward, getNewState());
 
             if (isAgentInFireState() || isAgentInGoalState())
-                agent.resetPosition(startState);
+                agent.resetPosition(startState.getCentreX(),startState.getCentreY());
 
             agent.setCurrentState(getNewState());
             agent.makeNewMove();

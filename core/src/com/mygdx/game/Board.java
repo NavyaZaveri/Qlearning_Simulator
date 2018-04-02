@@ -14,6 +14,7 @@ public class Board {
     private float tileHeight;
     private float tileWidth;
     private static Tile[][] board;
+    private Tile startState;
     private BitmapFont font = FontUtils.getInstance().getFont(50, Color.BROWN);
 
     public Board(int rows, int columns) {
@@ -27,6 +28,7 @@ public class Board {
                 board[i][j] = new Tile(tileHeight, tileWidth, i, j);
             }
         }
+        startState = board[0][0];
     }
 
     public void display(SpriteBatch batch) {
@@ -53,6 +55,10 @@ public class Board {
 
     public Tile getTile(int row, int col) {
         return board[row][col];
+    }
+
+    public Tile getStartState(){
+        return startState;
     }
 
 }

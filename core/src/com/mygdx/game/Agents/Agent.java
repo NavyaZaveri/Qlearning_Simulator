@@ -175,12 +175,10 @@ public abstract class Agent {
         currentKnownState = tile;
     }
 
-    public void resetLocation() {
-    }
 
-    public void resetPosition(Tile t) {
-        pos.x = t.getCentreX() - pos.width / 2;
-        pos.y = t.getCentreY() - pos.height / 2;
+    public void resetPosition(float x, float y) {
+        pos.x = x - pos.width / 2;
+        pos.y = y - pos.height / 2;
     }
 
     public void keepMoving() {

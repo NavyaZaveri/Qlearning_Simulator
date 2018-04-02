@@ -23,9 +23,6 @@ import static com.mygdx.game.Enums.Action.RIGHT;
 import static com.mygdx.game.Enums.Action.UP;
 import static com.mygdx.game.Utils.GameConstants.*;
 
-/**
- * Created by linux on 3/24/18.
- */
 
 public class GameScreen implements Screen {
     private SpriteBatch batch;

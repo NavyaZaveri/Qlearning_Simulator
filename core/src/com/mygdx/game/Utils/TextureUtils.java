@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import java.util.Collections;
 
 
-
 public final class TextureUtils {
     private static TextureUtils instance;
 

@@ -7,9 +7,9 @@ import com.mygdx.game.Utils.TextureUtils;
 
 public class Tile {
 
-    public static final Texture img = TextureUtils.getInstance().getNeutralTileImage();
-    public static final Texture fireImage = TextureUtils.getInstance().getFireImage();
-    public static final Texture goalImage = TextureUtils.getInstance().getGoalImage();
+    private final Texture img = TextureUtils.getInstance().getNeutralTileImage();
+    private final Texture fireImage = TextureUtils.getInstance().getFireImage();
+    private final Texture goalImage = TextureUtils.getInstance().getGoalImage();
 
     private Rectangle tile;
     private float centreX;

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.Enums.Action;
 import com.mygdx.game.Tile;
+import com.mygdx.game.Utils.TextureUtils;
 
 import org.javatuples.Pair;
 
@@ -29,17 +30,17 @@ public abstract class Agent {
 
     protected List<Action> actionList;
     private static final float epsilon = 0.1f;
-    private Texture img = new Texture("Robot.png");
-    private Random random = new Random();
+    protected Texture img;
+    private Random random;
     protected Action currentAction;
     public Tile currentKnownState;
-    protected static final float discountFactor = 0.05f;
-    protected static final float learningRate = 0.01f;
-    protected Map<Pair<Tile, Action>, Double> q_table = new HashMap<>();
+    protected  static final float discountFactor = 0.05f;
+    protected  static final float learningRate = 0.01f;
+    protected Map<Pair<Tile, Action>, Double> q_table;
 
 
     private static final float speed = 1000;
-    public Action action;
+    private Action action;
     public final Rectangle pos;
 
     public Agent(float height, float width) {
@@ -47,6 +48,10 @@ public abstract class Agent {
         actionList = Arrays.asList(Action.class.getEnumConstants());
         pos.height = height;
         pos.width = width;
+        q_table = new HashMap<>();
+        random = new Random();
+        img = TextureUtils.getInstance().getRobotImage();
+
     }
 
     public Double getBestValueAtState(Tile tile) {
@@ -64,11 +69,11 @@ public abstract class Agent {
     public Action getBestActionAtState(Tile tile) {
         Map<Action, Double> actionToValue = new HashMap<>();
 
-        for (Map.Entry<Pair<Tile, Action>, Double> x : q_table.entrySet()) {
+        for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
 
-            if (x.getKey().getValue0().getId()
+            if (entry.getKey().getValue0().getId()
                     .equals(tile.getId())) {
-                actionToValue.put(x.getKey().getValue1(), x.getValue());
+                actionToValue.put(entry.getKey().getValue1(), entry.getValue());
             }
         }
         double value = Collections.max(actionToValue.values());
@@ -123,7 +128,7 @@ public abstract class Agent {
         move();
     }
 
-    public void move() {
+    protected void move() {
         if (currentAction == UP) {
             pos.y += speed * Gdx.graphics.getDeltaTime();
         }

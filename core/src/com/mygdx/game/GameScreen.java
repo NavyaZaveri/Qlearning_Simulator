@@ -21,7 +21,7 @@ import static com.mygdx.game.Enums.Action.DOWN;
 import static com.mygdx.game.Enums.Action.LEFT;
 import static com.mygdx.game.Enums.Action.RIGHT;
 import static com.mygdx.game.Enums.Action.UP;
-import static com.mygdx.game.Utils.Constants.*;
+import static com.mygdx.game.Utils.GameConstants.*;
 
 /**
  * Created by linux on 3/24/18.
@@ -30,11 +30,14 @@ import static com.mygdx.game.Utils.Constants.*;
 public class GameScreen implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private int agentPosOffset = 50;
-    public Agent agent;
+
+    /*hardcoded offset that shrinks the
+    agent size to avoid tile detection anomalies*/
+
+    private final int agentPosOffset = 50;
+    private Agent agent;
     private Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;
-    private static BitmapFont font;
     private Tile startState;
     private List<Tile> fireStates = new ArrayList<>();
     private List<Tile> goalStates = new ArrayList<>();
@@ -44,17 +47,21 @@ public class GameScreen implements Screen {
         this.batch = batch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
+
         this.board = board;
         this.goalStates.addAll(goalStates);
         this.fireStates.addAll(fireStates);
         graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
+
         initStateActionPairs();
-        setFont();
+        startState = board.getTile(0, 0);
         agent.setCurrentState(board.getTile(0, 0));
         agent.resetPosition(board.getTile(0, 0));
-        startState = board.getTile(0, 0);
         populateGraph();
-        // showGraph();
+    }
+
+    private void initAgentStartPosition(Tile startState) {
+
     }
 
 
@@ -68,35 +75,13 @@ public class GameScreen implements Screen {
         }
     }
 
-
-    private void setFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 70;
-        font = generator.generateFont(parameter);
-        font.setColor(Color.BLACK);// font size 12 pixels
-        generator.dispose();
-    }
-
-    private void showGraph() {
-        for (Tile v1 : graph.vertexSet()) {
-            System.out.println(v1.getId());
-            Gdx.app.log("info", "vertex");
-            for (Reward r : graph.outgoingEdgesOf(v1)) {
-                System.out.println("neighbor");
-                System.out.println(graph.getEdgeTarget(r).getId());
-            }
-            System.out.println("                ");
-        }
-    }
-
     private Boolean agentOutOfBounds() {
         if (agent.getX() > SCREEN_WIDTH ||
                 agent.getX() < 0 - agent.getWidth() ||
                 agent.getY() > SCREEN_HEIGHT ||
                 agent.getY() < 0 - agent.getHeight()
                 ) {
-            Gdx.app.log("INFO", "OUT OF BOUNDS!!!!!");
+            Gdx.app.log("INFO", "OUT OF BOUNDS!");
             return true;
         }
         return false;
@@ -156,6 +141,7 @@ public class GameScreen implements Screen {
         return false;
     }
 
+    //sets up the reward ("edges") and states ("vertices")
     private void populateGraph() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
@@ -242,6 +228,7 @@ public class GameScreen implements Screen {
 
     }
 
+    //plays out a move made using keyboard
     private void makeForcedMove() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
@@ -259,12 +246,15 @@ public class GameScreen implements Screen {
 
 
     /*game strategy:
-    IF there is a change of state from q1 to q2, do the following
-    1) update the qtable for the entry (q1,action)
-    2) set the player's current state to q2
-    3) play out a move
-    otherwise, keep moving in action direction
-     */
+
+    If there is a change of state from q1 to q2, do the following:
+
+        1) update the qtable for the entry (q1,action)
+        2) set the player's current state to q2
+        3) play out a move
+
+    otherwise, keep moving in the direction previously taken
+    */
 
     @Override
     public void render(float delta) {
@@ -278,7 +268,7 @@ public class GameScreen implements Screen {
         //handles user input
         makeForcedMove();
 
-
+        //edge case (ha!): goes back to previous position and makes a new move if the agent moves out of screen
         if (agentOutOfBounds()) {
             agent.resetPosition(agent.currentKnownState);
             agent.makeNewMove();

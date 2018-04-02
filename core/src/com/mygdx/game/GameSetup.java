@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -10,28 +11,25 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Utils.FontUtils;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.mygdx.game.Utils.Constants.COLUMNS;
-import static com.mygdx.game.Utils.Constants.ROWS;
-import static com.mygdx.game.Utils.Constants.SCREEN_HEIGHT;
-import static com.mygdx.game.Utils.Constants.SCREEN_WIDTH;
-
+import static com.mygdx.game.Utils.GameConstants.*;
 
 public class GameSetup implements Screen {
 
     private OrthographicCamera camera;
     private Set<Tile> goalStates;
     private Set<Tile> fireStates;
-    Board board;
-    SpriteBatch batch;
-    BitmapFont font;
-    Vector3 mousePos;
-    Boolean finishedSetup = false;
-    GameScreen g;
+    private Board board;
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private Vector3 mousePos;
+    private Boolean finishedSetup = false;
+    private GameScreen g;
 
     public GameSetup() {
 
@@ -40,12 +38,11 @@ public class GameSetup implements Screen {
         board = new Board(ROWS, COLUMNS);
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
-        setFont();
-        font.setColor(Color.BLUE);
         mousePos = new Vector3();
         goalStates = new HashSet<>();
         fireStates = new HashSet<>();
     }
+
 
     private void toggle(Tile tile) {
 
@@ -58,6 +55,7 @@ public class GameSetup implements Screen {
         }
     }
 
+    //@returns: an immutable set of goal states
     private Set<Tile> getGoalStates() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
@@ -71,6 +69,7 @@ public class GameSetup implements Screen {
         return Collections.unmodifiableSet(this.goalStates);
     }
 
+    //@returns: an immutable set of goal states
     private Set<Tile> getFireStates() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
@@ -85,6 +84,11 @@ public class GameSetup implements Screen {
 
     }
 
+    private void clearScreen(){
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+    }
+
 
     @Override
     public void render(float delta) {
@@ -93,7 +97,7 @@ public class GameSetup implements Screen {
             return;
         }
         camera.update();
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        clearScreen();
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             getFireStates();
             getGoalStates();
@@ -105,18 +109,19 @@ public class GameSetup implements Screen {
         batch.begin();
         board.display(batch);
         batch.end();
+
         if (Gdx.input.justTouched()) {
             mousePos.x = Gdx.input.getX();
             mousePos.y = Gdx.input.getY();
             camera.unproject(mousePos);
-            Tile t = detectTile(mousePos.x, mousePos.y);
-            System.out.println("x cord is" + mousePos.x);
+            Tile t = detectTileOnClick(mousePos.x, mousePos.y);
             toggle(t);
         }
     }
 
 
-    private Tile detectTile(float x, float y) {
+    //finds the tile closest to on mouse coordinates
+    private Tile detectTileOnClick(float x, float y) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (board.getTile(i, j).getRectangle().contains(x, y)) {
@@ -127,15 +132,6 @@ public class GameSetup implements Screen {
             }
         }
         return null;
-    }
-
-    private void setFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("OpenSans-ExtraBold.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 40;
-        font = generator.generateFont(parameter);
-        font.setColor(Color.BLACK);// font size 12 pixels
-        generator.dispose();
     }
 
 

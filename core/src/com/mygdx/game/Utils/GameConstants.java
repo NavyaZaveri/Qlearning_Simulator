@@ -1,7 +1,7 @@
 package com.mygdx.game.Utils;
 
 
-public class Constants {
+public class GameConstants {
     public static final float SCREEN_HEIGHT = 1200;
     public static final float SCREEN_WIDTH = 1200;
     public static final int ROWS = 5;

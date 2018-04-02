@@ -1,19 +1,20 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Utils.FontUtils;
 
-import static com.mygdx.game.Utils.Constants.COLUMNS;
-import static com.mygdx.game.Utils.Constants.ROWS;
-import static com.mygdx.game.Utils.Constants.SCREEN_HEIGHT;
-import static com.mygdx.game.Utils.Constants.SCREEN_WIDTH;
+import static com.mygdx.game.Utils.GameConstants.*;
 
 
 public class Board {
-    public static int rows;
-    public static int columns;
+    private static int rows;
+    private static int columns;
     private float tileHeight;
     private float tileWidth;
     private static Tile[][] board;
+    private BitmapFont font = FontUtils.getInstance().getFont(50, Color.BROWN);
 
     public Board(int rows, int columns) {
         this.rows = rows;
@@ -43,9 +44,7 @@ public class Board {
                     batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
-                //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
-               // Double value = agent.getBestValueAtState(tile);
-               // font.draw(batch, value + "", tile.getCentreX(), tile.getCentreY());
+                font.draw(batch, tile.getId() + "", tile.getCentreX(), tile.getCentreY());
 
             }
         }

@@ -36,8 +36,8 @@ public final class FontUtils {
     public BitmapFont getFont(int size, Color color) {
         parameter.size = size;
         font = generator.generateFont(parameter);
+        System.out.println("woooo");
         font.setColor(color);
-        generator.dispose();
         return font;
     }
 

@@ -1,8 +1,5 @@
-package com.mygdx.game;
+package com.mygdx.game.Enums;
 
-/**
- * Created by linux on 3/24/18.
- */
 
 public enum Action {
     UP,

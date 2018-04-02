@@ -1,40 +1,39 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
-/**
- * Created by linux on 3/24/18.
- */
+import com.mygdx.game.Enums.State;
+import com.mygdx.game.Utils.TextureUtils;
 
 public class Tile {
 
-    public static final Texture img = new Texture(Gdx.files.internal("squre_tile.png"));
-    public static final Texture fireImage = new Texture(Gdx.files.internal("fire.png"));
-    public static final Texture goalImage = new Texture(Gdx.files.internal("water.png"));
+    private final Texture img = TextureUtils.getInstance().getNeutralTileImage();
+    private final Texture fireImage = TextureUtils.getInstance().getFireImage();
+    private final Texture goalImage = TextureUtils.getInstance().getGoalImage();
 
-    private Rectangle tile = new Rectangle();
+    private Rectangle tile;
     private float centreX;
     private float centreY;
     private String id;
-    public Boolean isFire = false;
-    private boolean isGoal = false;
+    private State state;
 
 
-    public Tile(int height, int width, int i, int j) {
+    public Tile(float height, float width, int i, int j) {
+        tile = new Rectangle();
         tile.height = height;
         tile.width = width;
-        tile.x = i * width;
-        tile.y = j * height;
+        tile.x = j * width;
+        tile.y = i * height;
         id = "[" + i + "," + j + "]";
         centreX = tile.x + width / 2;
         centreY = tile.y + height / 2;
 
+        //default state
+        state = State.NEUTRAL;
+
     }
 
-    public Texture getTileImage() {
+    public Texture getNeutralTileImage() {
         return img;
     }
 
@@ -45,7 +44,6 @@ public class Tile {
     public Texture getGoalImage() {
         return goalImage;
     }
-
 
     public String getId() {
         return this.id;
@@ -72,18 +70,27 @@ public class Tile {
     }
 
     public void makeFire() {
-        this.isFire = true;
+        state = State.FIRE;
     }
 
     public void makeGoal() {
-        this.isGoal = true;
+        state = State.GOAL;
+    }
+
+    public void makeNeutral() {
+        state = State.NEUTRAL;
     }
 
     public Boolean isFire() {
-        return this.isFire;
+        return state == State.FIRE;
     }
 
     public Boolean isGoal() {
-        return this.isGoal;
+        return state == State.GOAL;
     }
+
+    public Boolean isNeutral() {
+        return state == State.NEUTRAL;
+    }
+
 }

@@ -22,9 +22,6 @@ import static com.mygdx.game.Enums.Action.LEFT;
 import static com.mygdx.game.Enums.Action.RIGHT;
 import static com.mygdx.game.Enums.Action.UP;
 
-/**
- * Created by linux on 3/24/18.
- */
 
 public abstract class Agent {
 

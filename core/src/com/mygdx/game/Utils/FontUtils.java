@@ -34,7 +34,6 @@ public final class FontUtils {
     }
 
     public BitmapFont getFont(int size, Color color) {
-        setFont();
         parameter.size = size;
         font = generator.generateFont(parameter);
         font.setColor(color);

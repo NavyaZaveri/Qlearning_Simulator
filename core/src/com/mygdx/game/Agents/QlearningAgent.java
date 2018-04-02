@@ -1,6 +1,6 @@
 package com.mygdx.game.Agents;
 
-import com.mygdx.game.Utils.Action;
+import com.mygdx.game.Enums.Action;
 import com.mygdx.game.Tile;
 
 import org.javatuples.Pair;

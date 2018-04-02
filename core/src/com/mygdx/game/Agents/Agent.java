@@ -3,7 +3,7 @@ package com.mygdx.game.Agents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import com.mygdx.game.Utils.Action;
+import com.mygdx.game.Enums.Action;
 import com.mygdx.game.Tile;
 
 import org.javatuples.Pair;
@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.mygdx.game.Utils.Action.DOWN;
-import static com.mygdx.game.Utils.Action.LEFT;
-import static com.mygdx.game.Utils.Action.RIGHT;
-import static com.mygdx.game.Utils.Action.UP;
+import static com.mygdx.game.Enums.Action.DOWN;
+import static com.mygdx.game.Enums.Action.LEFT;
+import static com.mygdx.game.Enums.Action.RIGHT;
+import static com.mygdx.game.Enums.Action.UP;
 
 /**
  * Created by linux on 3/24/18.

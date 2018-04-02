@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.mygdx.game.Utils.Action.DOWN;
-import static com.mygdx.game.Utils.Action.LEFT;
-import static com.mygdx.game.Utils.Action.RIGHT;
-import static com.mygdx.game.Utils.Action.UP;
+import static com.mygdx.game.Enums.Action.DOWN;
+import static com.mygdx.game.Enums.Action.LEFT;
+import static com.mygdx.game.Enums.Action.RIGHT;
+import static com.mygdx.game.Enums.Action.UP;
 import static com.mygdx.game.Utils.Constants.*;
 
 /**
@@ -199,30 +199,6 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void displayBoard() {
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                Tile tile = board.getTile(i, j);
-
-
-                batch.draw(tile.getNeutralTileImage(), j * tile.getWidth(), i * tile.getHeight(),
-                        tile.getWidth(), tile.getHeight());
-
-                if (tile.isFire())
-                    batch.draw(tile.getFireImage(), j * tile.getWidth(), i * tile.getHeight(),
-                            tile.getWidth(), tile.getHeight());
-                if (tile.isGoal())
-                    batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
-                            tile.getWidth(), tile.getHeight());
-
-                //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
-                Double value = agent.getBestValueAtState(tile);
-                font.draw(batch, value + "", tile.getCentreX(), tile.getCentreY());
-
-            }
-        }
-    }
-
 
     private Boolean detectOverlap() {
         for (int i = 0; i < ROWS; i++) {
@@ -276,7 +252,7 @@ public class GameScreen implements Screen {
     private void displayGame() {
 
         batch.begin();
-        displayBoard();
+        board.display(batch);
         displayRobot();
         batch.end();
     }

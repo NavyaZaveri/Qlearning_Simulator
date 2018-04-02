@@ -1,13 +1,12 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import static com.mygdx.game.Utils.Constants.COLUMNS;
+import static com.mygdx.game.Utils.Constants.ROWS;
 import static com.mygdx.game.Utils.Constants.SCREEN_HEIGHT;
 import static com.mygdx.game.Utils.Constants.SCREEN_WIDTH;
 
-/**
- * Created by linux on 3/24/18.
- */
-
-//TODO: IMPLEMENT ITERATOR!!!!
 
 public class Board {
     public static int rows;
@@ -27,6 +26,30 @@ public class Board {
                 board[i][j] = new Tile(tileHeight, tileWidth, i, j);
             }
         }
+    }
+
+    public void display(SpriteBatch batch) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                Tile tile = getTile(i, j);
+
+                batch.draw(tile.getNeutralTileImage(), j * tile.getWidth(), i * tile.getHeight(),
+                        tile.getWidth(), tile.getHeight());
+
+                if (tile.isFire())
+                    batch.draw(tile.getFireImage(), j * tile.getWidth(), i * tile.getHeight(),
+                            tile.getWidth(), tile.getHeight());
+                if (tile.isGoal())
+                    batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
+                            tile.getWidth(), tile.getHeight());
+
+                //font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
+               // Double value = agent.getBestValueAtState(tile);
+               // font.draw(batch, value + "", tile.getCentreX(), tile.getCentreY());
+
+            }
+        }
+
     }
 
     public Tile getTile(int row, int col) {

@@ -20,9 +20,6 @@ import static com.mygdx.game.Utils.Constants.ROWS;
 import static com.mygdx.game.Utils.Constants.SCREEN_HEIGHT;
 import static com.mygdx.game.Utils.Constants.SCREEN_WIDTH;
 
-/**
- * Created by linux on 3/31/18.
- */
 
 public class GameSetup implements Screen {
 
@@ -61,7 +58,7 @@ public class GameSetup implements Screen {
         }
     }
 
-    public Set<Tile> getGoalStates() {
+    private Set<Tile> getGoalStates() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 Tile tile = board.getTile(i, j);
@@ -106,7 +103,7 @@ public class GameSetup implements Screen {
 
 
         batch.begin();
-        displayBoard();
+        board.display(batch);
         batch.end();
         if (Gdx.input.justTouched()) {
             mousePos.x = Gdx.input.getX();
@@ -141,28 +138,6 @@ public class GameSetup implements Screen {
         generator.dispose();
     }
 
-
-    private void displayBoard() {
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
-                Tile tile = board.getTile(i, j);
-
-                batch.draw(tile.getNeutralTileImage(), j * tile.getWidth(), i * tile.getHeight(),
-                        tile.getWidth(), tile.getHeight());
-
-                if (tile.isFire())
-                    batch.draw(tile.getFireImage(), j * tile.getWidth(), i * tile.getHeight(),
-                            tile.getWidth(), tile.getHeight());
-                if (tile.isGoal())
-                    batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
-                            tile.getWidth(), tile.getHeight());
-
-                font.draw(batch, tile.getId(), tile.getCentreX(), tile.getCentreY());
-
-
-            }
-        }
-    }
 
     @Override
     public void show() {

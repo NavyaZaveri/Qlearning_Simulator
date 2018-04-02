@@ -1,19 +1,9 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Enums.State;
 import com.mygdx.game.Utils.TextureUtils;
-
-/**
- * Created by linux on 3/24/18.
- */
-enum State {
-    FIRE,
-    NEUTRAL,
-    GOAL;
-}
 
 public class Tile {
 

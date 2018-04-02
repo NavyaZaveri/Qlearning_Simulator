@@ -1,8 +1,5 @@
 package com.mygdx.game.Utils;
 
-/**
- * Created by linux on 4/1/18.
- */
 
 public class Constants {
     public static final float SCREEN_HEIGHT = 1200;

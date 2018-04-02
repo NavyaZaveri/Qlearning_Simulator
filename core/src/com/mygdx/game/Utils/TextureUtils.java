@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import java.util.Collections;
 
-/**
- * Created by linux on 3/31/18.
- */
+
 
 public final class TextureUtils {
     private static TextureUtils instance;
@@ -22,7 +20,7 @@ public final class TextureUtils {
         fireImage = new Texture(Gdx.files.internal("fire.png"));
         goalImage = new Texture(Gdx.files.internal("water.png"));
         agentImage = new Texture(Gdx.files.internal("Robot.png"));
-        neutralTileImage = new Texture(Gdx.files.internal("squre_tile.png"));
+        neutralTileImage = new Texture(Gdx.files.internal("square_tile.png"));
     }
 
     public static TextureUtils getInstance() {
@@ -44,7 +42,8 @@ public final class TextureUtils {
     public Texture getRobotImage() {
         return agentImage;
     }
-    public Texture getNeutralTileImage(){
+
+    public Texture getNeutralTileImage() {
         return neutralTileImage;
     }
 

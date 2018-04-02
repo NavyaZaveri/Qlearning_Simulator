@@ -120,25 +120,12 @@ public class GameScreen implements Screen {
     }
 
     private Boolean isAgentInFireState() {
-
-        for (Tile tile : fireStates) {
-            if (getNewState().isFire()) {
-                System.out.println("detected fireeeee");
-                return true;
-            }
-        }
-        return false;
+        return getNewState().isFire();
     }
 
 
     private Boolean isAgentInGoalState() {
-
-        for (Tile tile : goalStates) {
-            if (getNewState().isGoal()) {
-                return true;
-            }
-        }
-        return false;
+        return getNewState().isGoal();
     }
 
     //sets up the reward ("edges") and states ("vertices")

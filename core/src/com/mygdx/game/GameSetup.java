@@ -92,6 +92,9 @@ public class GameSetup implements Screen {
 
     @Override
     public void render(float delta) {
+        camera.update();
+
+
         if (finishedSetup) {
             g.render(delta);
             return;

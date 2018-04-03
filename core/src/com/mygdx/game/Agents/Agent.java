@@ -31,8 +31,8 @@ public abstract class Agent {
     private Random random;
     protected Action currentAction;
     public Tile currentKnownState;
-    protected  static final float discountFactor = 0.05f;
-    protected  static final float learningRate = 0.01f;
+    protected static final float discountFactor = 0.05f;
+    protected static final float learningRate = 0.01f;
     protected Map<Pair<Tile, Action>, Double> q_table;
 
 
@@ -51,6 +51,9 @@ public abstract class Agent {
 
     }
 
+    /*@param Tile:
+      @returns Double: the highest value corresponding to a given state,action
+     */
     public Double getBestValueAtState(Tile tile) {
         double max = -100;
 
@@ -63,6 +66,13 @@ public abstract class Agent {
         return max;
     }
 
+
+    /* @param Tile
+       @returns Action: the best possible action on a given Tile.
+       Iterates through all possibles (tile,action) tuples and
+       finds the best one. Selects a random action
+       if there are many best actions.
+     */
     public Action getBestActionAtState(Tile tile) {
         Map<Action, Double> actionToValue = new HashMap<>();
 
@@ -113,6 +123,7 @@ public abstract class Agent {
         move();
     }
 
+    //initializes the q_table to 0's
     public void setQ_table(Tile tile) {
         for (Action action : actionList) {
             Pair<Tile, Action> tile_action = new Pair<>(tile, action);
@@ -120,6 +131,7 @@ public abstract class Agent {
         }
     }
 
+    //the user can force a move
     public void forceMove(Action action) {
         currentAction = action;
         move();

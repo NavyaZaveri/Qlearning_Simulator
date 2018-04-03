@@ -5,9 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
-/**
- * Created by linux on 4/2/18.
- */
 
 public final class FontUtils {
     private static FontUtils instance;

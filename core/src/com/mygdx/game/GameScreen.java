@@ -55,9 +55,8 @@ public class GameScreen implements Screen {
         startState = board.getStartState();
 
         agent.setCurrentState(startState);
-        agent.resetPosition(startState.getCentreX(),startState.getCentreY());
+        agent.resetPosition(startState.getCentreX(), startState.getCentreY());
     }
-
 
 
     private void initStateActionPairs() {
@@ -142,6 +141,8 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
+
+    //sets negative values to edges directed at fire states
     private void setFireEdges() {
 
         for (Tile tile : fireStates) {
@@ -155,6 +156,7 @@ public class GameScreen implements Screen {
 
     }
 
+    //sets positives rewards to edges directed at goal states
     private void setGoalEdges() {
 
         for (Tile tile : goalStates) {
@@ -196,7 +198,8 @@ public class GameScreen implements Screen {
 
     private void displayRobot() {
         batch.draw(agent.getImage(), agent.getX(),
-                agent.getY(), agent.getWidth(), agent.getHeight());
+                agent.getY(), agent.getWidth(),
+                agent.getHeight());
     }
 
     @Override
@@ -206,11 +209,13 @@ public class GameScreen implements Screen {
 
 
     private Boolean changeOfstate() {
-        return detectOverlap() && agent.currentKnownState != getNewState() && getNewState() != null;
+        return (detectOverlap()
+                && agent.currentKnownState != getNewState()
+                && getNewState() != null);
 
     }
 
-    //plays out a move made using keyboard
+    //plays out a move made by the user using keyboard
     private void makeForcedMove() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) agent.forceMove(UP);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
@@ -267,7 +272,7 @@ public class GameScreen implements Screen {
             agent.updateQ_table(reward, getNewState());
 
             if (isAgentInFireState() || isAgentInGoalState())
-                agent.resetPosition(startState.getCentreX(),startState.getCentreY());
+                agent.resetPosition(startState.getCentreX(), startState.getCentreY());
 
             agent.setCurrentState(getNewState());
             agent.makeNewMove();

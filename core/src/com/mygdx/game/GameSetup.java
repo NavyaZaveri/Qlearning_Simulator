@@ -44,6 +44,7 @@ public class GameSetup implements Screen {
     }
 
 
+    //performs a 3-way cyclic toggle
     private void toggle(Tile tile) {
 
         if (tile.isNeutral()) {
@@ -84,7 +85,7 @@ public class GameSetup implements Screen {
 
     }
 
-    private void clearScreen(){
+    private void clearScreen() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     }
@@ -93,14 +94,13 @@ public class GameSetup implements Screen {
     @Override
     public void render(float delta) {
         camera.update();
+        clearScreen();
 
 
         if (finishedSetup) {
             g.render(delta);
             return;
         }
-        camera.update();
-        clearScreen();
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             getFireStates();
             getGoalStates();
@@ -118,12 +118,13 @@ public class GameSetup implements Screen {
             mousePos.y = Gdx.input.getY();
             camera.unproject(mousePos);
             Tile t = detectTileOnClick(mousePos.x, mousePos.y);
-            toggle(t);
+            if (t != board.getStartState())
+                toggle(t);
         }
     }
 
-
-    //finds the tile closest to on mouse coordinates
+    /*@param: x,y coordinates of mouse
+     @returns Tile: the tile enclosing the mouse coordinates */
     private Tile detectTileOnClick(float x, float y) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {

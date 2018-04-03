@@ -36,7 +36,7 @@ public abstract class Agent {
     protected Map<Pair<Tile, Action>, Double> q_table;
 
 
-    private static final float speed = 1000;
+    public static float speed = 1000;
     private Action action;
     public final Rectangle pos;
 
@@ -52,7 +52,7 @@ public abstract class Agent {
     }
 
     /*@param Tile:
-      @returns Double: the highest value corresponding to a given state,action
+      @returns Double: the highest value corresponding to a given (state,action)
      */
     public Double getBestValueAtState(Tile tile) {
         double max = -100;
@@ -77,15 +77,18 @@ public abstract class Agent {
         Map<Action, Double> actionToValue = new HashMap<>();
 
         for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
+            Tile someTile = entry.getKey().getValue0();
 
-            if (entry.getKey().getValue0().getId()
+            if (someTile.getId()
                     .equals(tile.getId())) {
+
                 actionToValue.put(entry.getKey().getValue1(), entry.getValue());
             }
         }
         double value = Collections.max(actionToValue.values());
 
         List<Action> bestActions = new ArrayList<>();
+
         for (Map.Entry<Action, Double> pair : actionToValue.entrySet()) {
             if (pair.getValue() == value) {
                 bestActions.add(pair.getKey());
@@ -103,6 +106,8 @@ public abstract class Agent {
     }
 
 
+    /*epsilon-greedy strategy
+     @returns Action*/
     protected Action getAction() {
 
         if (epsilon > Math.random()) {

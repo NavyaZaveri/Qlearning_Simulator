@@ -56,6 +56,7 @@ public class GameScreen implements Screen {
 
         agent.setCurrentState(startState);
         agent.resetPosition(startState.getCentreX(), startState.getCentreY());
+        agent.makeNewMove();
     }
 
 
@@ -221,6 +222,12 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
+
+
+        //press A or S to decrease or increase the speed of the Agent
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) agent.speed -=50;
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) agent.speed +=50;
+
     }
 
     private void displayGame() {

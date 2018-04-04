@@ -80,12 +80,12 @@ public final class InputHandler implements Screen {
 
     }
 
-    private void setRow() {
+    private void setRowValue() {
         rows = Integer.parseInt(rowSpinner.getModel().getText());
         GameConstants.setROWS(rows);
     }
 
-    private void setColumns() {
+    private void setColumnValue() {
         columns = Integer.parseInt(colSpinner.getModel().getText());
         GameConstants.setCOLUMNS(columns);
 
@@ -101,12 +101,14 @@ public final class InputHandler implements Screen {
 
         stage.draw();
         batch.begin();
-        font.draw(batch, "SET MATRIX DIMENSIONS", 40, 300);
+
+        //hardcoded font position
+        font.draw(batch, "SET MATRIX DIMENSIONS", Gdx.graphics.getWidth()/2-200, 300);
         batch.end();
 
         if (inputConfirmed()) {
-            setRow();
-            setColumns();
+            setRowValue();
+            setColumnValue();
             g = new GameSetup();
             inputHandlingDone = true;
         }

@@ -36,7 +36,7 @@ public abstract class Agent {
     protected Map<Pair<Tile, Action>, Double> q_table;
 
 
-    public static float speed = 1000;
+    public static float speed = 500;
     private Action action;
     public final Rectangle pos;
 
@@ -52,7 +52,7 @@ public abstract class Agent {
     }
 
     /*@param Tile:
-      @returns Double: the highest value corresponding to a given (state,action)
+      @returns Double: the highest value corresponding to a given (state, action)
      */
     public Double getBestValueAtState(Tile tile) {
         double max = -100;
@@ -69,6 +69,7 @@ public abstract class Agent {
 
     /* @param Tile
        @returns Action: the best possible action on a given Tile.
+
        Iterates through all possibles (tile,action) tuples and
        finds the best one. Selects a random action
        if there are many best actions.
@@ -111,7 +112,6 @@ public abstract class Agent {
     protected Action getAction() {
 
         if (epsilon > Math.random()) {
-            System.out.println("making random move");
             return actionList.get(random.nextInt(actionList.size()));
         } else {
             Action bestAction = getBestActionAtState(currentKnownState);
@@ -123,7 +123,6 @@ public abstract class Agent {
     //the robot has detected a change in state. It needs to make a move now.
     public void makeNewMove() {
         action = getAction();
-        Gdx.app.log("INFO", "GOING " + action);
         currentAction = action;
         move();
     }

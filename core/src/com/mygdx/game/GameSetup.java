@@ -19,16 +19,15 @@ import java.util.Set;
 
 import static com.mygdx.game.Utils.GameConstants.*;
 
-public class GameSetup implements Screen {
+public final class GameSetup implements Screen {
 
     private OrthographicCamera camera;
     private Set<Tile> goalStates;
     private Set<Tile> fireStates;
     private Board board;
     private SpriteBatch batch;
-    private BitmapFont font;
     private Vector3 mousePos;
-    private Boolean finishedSetup = false;
+    private Boolean finishedSetup;
     private GameScreen g;
 
     public GameSetup() {
@@ -41,10 +40,11 @@ public class GameSetup implements Screen {
         mousePos = new Vector3();
         goalStates = new HashSet<>();
         fireStates = new HashSet<>();
+        finishedSetup = false;
     }
 
 
-    //performs a 3-way cyclic toggle
+    //a 3-way cyclic toggle
     private void toggle(Tile tile) {
 
         if (tile.isNeutral()) {
@@ -96,7 +96,6 @@ public class GameSetup implements Screen {
         camera.update();
         clearScreen();
 
-
         if (finishedSetup) {
             g.render(delta);
             return;
@@ -107,7 +106,6 @@ public class GameSetup implements Screen {
             g = new GameScreen(batch, this.board, this.goalStates, this.fireStates);
             finishedSetup = true;
         }
-
 
         batch.begin();
         board.display(batch);

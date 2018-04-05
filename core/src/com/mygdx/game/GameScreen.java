@@ -30,8 +30,8 @@ public class GameScreen implements Screen {
 
     /*hardcoded offset that shrinks the
     agent size to avoid tile detection anomalies*/
-
     private final int agentPosOffset = 50;
+
     private Agent agent;
     private Board board;
     private SimpleDirectedWeightedGraph<Tile, Reward> graph;

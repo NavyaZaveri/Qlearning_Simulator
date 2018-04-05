@@ -17,9 +17,6 @@ import com.kotcrab.vis.ui.widget.spinner.Spinner;
 import com.mygdx.game.Utils.FontUtils;
 import com.mygdx.game.Utils.GameConstants;
 
-/**
- * Created by linux on 4/4/18.
- */
 
 public final class InputHandler implements Screen {
 
@@ -66,6 +63,7 @@ public final class InputHandler implements Screen {
         stage.addActor(rowSpinner);
         stage.addActor(colSpinner);
         Gdx.input.setInputProcessor(stage);
+
         this.batch = batch;
         font = FontUtils.getInstance().getFont(30, Color.BROWN);
     }
@@ -103,12 +101,13 @@ public final class InputHandler implements Screen {
         batch.begin();
 
         //hardcoded font position
-        font.draw(batch, "SET MATRIX DIMENSIONS", Gdx.graphics.getWidth()/2-200, 300);
+        font.draw(batch, "SET MATRIX DIMENSIONS", Gdx.graphics.getWidth() / 2 - 200, 300);
         batch.end();
 
         if (inputConfirmed()) {
             setRowValue();
             setColumnValue();
+
             g = new GameSetup();
             inputHandlingDone = true;
         }

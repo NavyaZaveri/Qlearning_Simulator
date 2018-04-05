@@ -115,6 +115,7 @@ public final class GameSetup implements Screen {
             mousePos.x = Gdx.input.getX();
             mousePos.y = Gdx.input.getY();
             camera.unproject(mousePos);
+
             Tile t = detectTileOnClick(mousePos.x, mousePos.y);
             if (t != board.getStartState())
                 toggle(t);

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.mygdx.game.Enums.Action.DOWN;
 import static com.mygdx.game.Enums.Action.LEFT;
@@ -55,15 +56,11 @@ public abstract class Agent {
       @returns Double: the highest value corresponding to a given (state, action)
      */
     public Double getBestValueAtState(Tile tile) {
-        double max = -100;
 
-
-        for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
-            if (entry.getKey().getValue0().getId().equals(tile.getId())) {
-                max = Math.max(max, entry.getValue());
-            }
-        }
-        return max;
+        // return max;
+        return Collections.max(q_table.entrySet().stream().
+                filter(x -> x.getKey().getValue0().getId().equals(tile.getId())).
+                map(x -> x.getValue()).collect(Collectors.toList()));
     }
 
 
@@ -75,26 +72,23 @@ public abstract class Agent {
        if there are many best actions.
      */
     public Action getBestActionAtState(Tile tile) {
-        Map<Action, Double> actionToValue = new HashMap<>();
+        Map<Action, Double> actionToValue;
 
-        for (Map.Entry<Pair<Tile, Action>, Double> entry : q_table.entrySet()) {
-            Tile someTile = entry.getKey().getValue0();
+        actionToValue = q_table.entrySet().stream().
+                filter(x -> x.getKey().getValue0().getId().equals(tile.getId())).
+                collect(Collectors.toMap(x -> x.getKey().getValue1(),
+                                         x -> x.getValue()));
 
-            if (someTile.getId()
-                    .equals(tile.getId())) {
 
-                actionToValue.put(entry.getKey().getValue1(), entry.getValue());
-            }
-        }
         double value = Collections.max(actionToValue.values());
 
-        List<Action> bestActions = new ArrayList<>();
+        List<Action> bestActions;
 
-        for (Map.Entry<Action, Double> pair : actionToValue.entrySet()) {
-            if (pair.getValue() == value) {
-                bestActions.add(pair.getKey());
-            }
-        }
+        bestActions = actionToValue.entrySet().stream().
+                filter(x -> x.getValue() == value).
+                map(x -> x.getKey()).collect(
+                Collectors.toList());
+
 
         //if there are multiple best actions, return a random one
         return bestActions.get(random.nextInt(bestActions.size()));

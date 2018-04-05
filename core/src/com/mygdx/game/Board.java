@@ -46,8 +46,6 @@ public class Board {
                     batch.draw(tile.getGoalImage(), j * tile.getWidth(), i * tile.getHeight(),
                             tile.getWidth(), tile.getHeight());
 
-                font.draw(batch, tile.getId() + "", tile.getCentreX(), tile.getCentreY());
-
             }
         }
 
@@ -57,7 +55,7 @@ public class Board {
         return board[row][col];
     }
 
-    public Tile getStartState(){
+    public Tile getStartState() {
         return startState;
     }
 

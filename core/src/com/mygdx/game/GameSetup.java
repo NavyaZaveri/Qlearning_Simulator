@@ -18,6 +18,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.mygdx.game.Utils.GameConstants.*;
+/*
+Allows the users to select positions for goals and obstacles
+ */
 
 public final class GameSetup implements Screen {
 
@@ -123,7 +126,7 @@ public final class GameSetup implements Screen {
     }
 
     /*@param: x,y coordinates of mouse
-     @returns Tile: the tile enclosing the mouse coordinates */
+     @returns Tile: the tile selected */
     private Tile detectTileOnClick(float x, float y) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {

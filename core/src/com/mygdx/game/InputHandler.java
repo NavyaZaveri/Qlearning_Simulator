@@ -18,6 +18,10 @@ import com.mygdx.game.Utils.FontUtils;
 import com.mygdx.game.Utils.GameConstants;
 
 
+/*
+Allows the user to set the dimensions of the game board
+ */
+
 public final class InputHandler implements Screen {
 
     private Stage stage;

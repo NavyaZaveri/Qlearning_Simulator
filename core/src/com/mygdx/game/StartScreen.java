@@ -22,7 +22,6 @@ public final class StartScreen extends Game {
     SpriteBatch batch;
     Boolean gameStarted = false;
     BitmapFont font;
-    Stage stage;
 
     @Override
     public void create() {

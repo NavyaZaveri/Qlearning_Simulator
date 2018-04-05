@@ -25,14 +25,14 @@ Allows the user to set the dimensions of the game board
 public final class InputHandler implements Screen {
 
     private Stage stage;
-    Spinner rowSpinner;
-    Spinner colSpinner;
-    Boolean inputHandlingDone = false;
-    BitmapFont font;
-    SpriteBatch batch;
-    public int rows;
-    public int columns;
-    GameSetup g;
+    private Spinner rowSpinner;
+    private Spinner colSpinner;
+    private Boolean inputHandlingDone = false;
+    private BitmapFont font;
+    private SpriteBatch batch;
+    private int rows;
+    private int columns;
+    private GameSetup g;
 
     private Spinner createSpinner(String title, float x, float y) {
         IntSpinnerModel intModel = new IntSpinnerModel(2, 2, 10, 1);

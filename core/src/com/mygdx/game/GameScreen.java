@@ -3,12 +3,9 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.mygdx.game.Agents.*;
 
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -40,6 +37,7 @@ public class GameScreen implements Screen {
     private List<Tile> goalStates = new ArrayList<>();
 
     public GameScreen(SpriteBatch batch, Board board, Set<Tile> goalStates, Set<Tile> fireStates) {
+        
         agent = new QlearningAgent(SCREEN_HEIGHT / ROWS - agentPosOffset, SCREEN_WIDTH / COLUMNS - agentPosOffset);
         this.batch = batch;
         camera = new OrthographicCamera();
@@ -222,33 +220,23 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) agent.forceMove(LEFT);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) agent.forceMove(RIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) agent.forceMove(DOWN);
-
-
-        //press A or S to decrease or increase the speed of the Agent
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) agent.speed -=50;
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) agent.speed +=50;
-
     }
 
-    private void displayGame() {
+    private Boolean detectUserIncreasedSpeed() {
+        return Gdx.input.isKeyPressed(Input.Keys.A);
+    }
 
+    private Boolean detectUserDecreasedSpeed() {
+        return Gdx.input.isKeyPressed(Input.Keys.S);
+    }
+
+
+    private void displayGame() {
         batch.begin();
         board.display(batch);
         displayRobot();
         batch.end();
     }
-
-
-    /*game strategy:
-
-    If there is a change of state from q1 to q2, do the following:
-
-        1) update the qtable for the entry (q1,action)
-        2) set the player's current state to q2
-        3) play out a move
-
-    otherwise, keep moving in the direction previously taken
-    */
 
     @Override
     public void render(float delta) {
@@ -256,13 +244,12 @@ public class GameScreen implements Screen {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-
         displayGame();
 
-        //handles user input
-        makeForcedMove();
+        if (detectUserIncreasedSpeed()) agent.increaseSpeed();
+        if (detectUserDecreasedSpeed()) agent.decreaseSpeed();
 
-        //edge case (ha!): goes back to previous position and makes a new move if the agent moves out of screen
+        //edge case: goes back to previous position and makes a new move if the agent moves out of screen
         if (agentOutOfBounds()) {
             agent.resetPosition(agent.currentKnownState.getCentreX(),
                     agent.currentKnownState.getCentreY());
@@ -270,6 +257,18 @@ public class GameScreen implements Screen {
             agent.makeNewMove();
             return;
         }
+
+
+        /*
+        If there is a change of state from q1 to q2, do the following:
+
+        1) update the qtable for the entry (q1,action)
+        2) set the player's current state to q2
+        3) make a new move
+
+        otherwise, keep moving in the direction previously taken
+        */
+
 
         if (changeOfstate()) {
 

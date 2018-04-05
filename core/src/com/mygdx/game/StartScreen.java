@@ -32,7 +32,6 @@ public final class StartScreen extends Game {
 
     private void clearScreen() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
     }
 
     @Override

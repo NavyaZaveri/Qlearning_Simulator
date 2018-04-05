@@ -30,12 +30,12 @@ public final class GameSetup implements Screen {
     private Boolean finishedSetup;
     private GameScreen g;
 
-    public GameSetup() {
+    public GameSetup(SpriteBatch batch) {
 
         camera = new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT);
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
         board = new Board(ROWS, COLUMNS);
-        batch = new SpriteBatch();
+        this.batch = batch;
         batch.setProjectionMatrix(camera.combined);
         mousePos = new Vector3();
         goalStates = new HashSet<>();

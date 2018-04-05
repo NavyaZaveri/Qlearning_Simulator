@@ -37,7 +37,9 @@ public abstract class Agent {
     protected Map<Pair<Tile, Action>, Double> q_table;
 
 
-    public static float speed = 500;
+    public static float current_speed = 500;
+    public static final float max_speed = 700;
+    public static final float min_spped = 100;
     private Action action;
     public final Rectangle pos;
 
@@ -53,11 +55,10 @@ public abstract class Agent {
     }
 
     /*@param Tile:
-      @returns Double: the highest value corresponding to a given (state, action)
+      @returns Double: the value assoicated with best action possible at a given state
      */
     public Double getBestValueAtState(Tile tile) {
 
-        // return max;
         return Collections.max(q_table.entrySet().stream().
                 filter(x -> x.getKey().getValue0().getId().equals(tile.getId())).
                 map(x -> x.getValue()).collect(Collectors.toList()));
@@ -86,7 +87,7 @@ public abstract class Agent {
                 Collectors.toList());
 
 
-        //if there are multiple best actions, return a random one
+        //if there are multiple best actions, return a random action
         return bestActions.get(random.nextInt(bestActions.size()));
     }
 
@@ -110,7 +111,6 @@ public abstract class Agent {
     }
 
 
-    //the robot has detected a change in state. It needs to make a move now.
     public void makeNewMove() {
         action = getAction();
         currentAction = action;
@@ -133,22 +133,29 @@ public abstract class Agent {
 
     protected void move() {
         if (currentAction == UP) {
-            pos.y += speed * Gdx.graphics.getDeltaTime();
+            pos.y += current_speed * Gdx.graphics.getDeltaTime();
         }
         if (currentAction == DOWN) {
-            pos.y -= speed * Gdx.graphics.getDeltaTime();
+            pos.y -= current_speed * Gdx.graphics.getDeltaTime();
         }
 
         if (currentAction == RIGHT) {
-            pos.x += speed * Gdx.graphics.getDeltaTime();
+            pos.x += current_speed * Gdx.graphics.getDeltaTime();
         }
 
         if (currentAction == LEFT) {
-            pos.x -= speed * Gdx.graphics.getDeltaTime();
+            pos.x -= current_speed * Gdx.graphics.getDeltaTime();
         }
 
     }
 
+    public void increaseSpeed(){
+        current_speed =  Math.min(current_speed+20,max_speed);
+    }
+
+    public void decreaseSpeed(){
+        current_speed = Math.max(current_speed-20,min_spped);
+    }
 
     public Texture getImage() {
         return img;

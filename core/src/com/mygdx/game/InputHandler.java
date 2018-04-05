@@ -108,7 +108,7 @@ public final class InputHandler implements Screen {
             setRowValue();
             setColumnValue();
 
-            g = new GameSetup();
+            g = new GameSetup(batch);
             inputHandlingDone = true;
         }
     }

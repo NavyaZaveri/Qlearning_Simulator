@@ -72,20 +72,16 @@ public abstract class Agent {
        if there are many best actions.
      */
     public Action getBestActionAtState(Tile tile) {
-        Map<Action, Double> actionToValue;
-
-        actionToValue = q_table.entrySet().stream().
+        Map<Action, Double> actionToValue = q_table.entrySet().stream().
                 filter(x -> x.getKey().getValue0().getId().equals(tile.getId())).
                 collect(Collectors.toMap(x -> x.getKey().getValue1(),
                                          x -> x.getValue()));
 
 
-        double value = Collections.max(actionToValue.values());
+        double bestValue = Collections.max(actionToValue.values());
 
-        List<Action> bestActions;
-
-        bestActions = actionToValue.entrySet().stream().
-                filter(x -> x.getValue() == value).
+        List<Action> bestActions = actionToValue.entrySet().stream().
+                filter(x -> x.getValue() == bestValue).
                 map(x -> x.getKey()).collect(
                 Collectors.toList());
 

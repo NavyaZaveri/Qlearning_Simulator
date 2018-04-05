@@ -78,12 +78,12 @@ public final class InputHandler implements Screen {
 
     }
 
-    private void setRowValue() {
+    private void setGameRowValue() {
         rows = Integer.parseInt(rowSpinner.getModel().getText());
         GameConstants.setROWS(rows);
     }
 
-    private void setColumnValue() {
+    private void setGameColumnValue() {
         columns = Integer.parseInt(colSpinner.getModel().getText());
         GameConstants.setCOLUMNS(columns);
 
@@ -105,8 +105,8 @@ public final class InputHandler implements Screen {
         batch.end();
 
         if (inputConfirmed()) {
-            setRowValue();
-            setColumnValue();
+            setGameRowValue();
+            setGameColumnValue();
 
             g = new GameSetup(batch);
             inputHandlingDone = true;

@@ -38,7 +38,8 @@ public final class GameScreen implements Screen {
 
     public GameScreen(SpriteBatch batch, Board board, Set<Tile> goalStates, Set<Tile> fireStates) {
         
-        agent = new QlearningAgent(SCREEN_HEIGHT / ROWS - agentPosOffset, SCREEN_WIDTH / COLUMNS - agentPosOffset);
+        agent = new QlearningAgent(SCREEN_HEIGHT / ROWS - agentPosOffset,
+                                  SCREEN_WIDTH / COLUMNS - agentPosOffset);
         this.batch = batch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -46,7 +47,7 @@ public final class GameScreen implements Screen {
         this.board = board;
         this.goalStates.addAll(goalStates);
         this.fireStates.addAll(fireStates);
-        graph = new SimpleDirectedWeightedGraph<Tile, Reward>(Reward.class);
+        graph = new SimpleDirectedWeightedGraph<>(Reward.class);
 
         initStateActionPairs();
         populateGraph();
@@ -258,7 +259,6 @@ public final class GameScreen implements Screen {
             return;
         }
 
-
         /*
         If there is a change of state from q1 to q2, do the following:
 
@@ -266,12 +266,10 @@ public final class GameScreen implements Screen {
         2) Set the player's current state to q2.
         3) Make a new move.
 
-        Otherwise, keep moving in the direction previously taken.
+        Otherwise, keep moving.
         */
 
-
         if (changeOfstate()) {
-
             double reward = graph.getEdge(agent.currentKnownState, getNewState()).getWeight();
             System.out.println(reward);
 

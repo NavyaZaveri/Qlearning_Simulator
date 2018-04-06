@@ -21,7 +21,7 @@ import static com.mygdx.game.Enums.Action.UP;
 import static com.mygdx.game.Utils.GameConstants.*;
 
 
-public class GameScreen implements Screen {
+public final class GameScreen implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
 
@@ -197,8 +197,8 @@ public class GameScreen implements Screen {
 
     private void displayRobot() {
         batch.draw(agent.getImage(), agent.getX(),
-                agent.getY(), agent.getWidth(),
-                agent.getHeight());
+                   agent.getY(), agent.getWidth(),
+                   agent.getHeight());
     }
 
     @Override
@@ -262,11 +262,11 @@ public class GameScreen implements Screen {
         /*
         If there is a change of state from q1 to q2, do the following:
 
-        1) update the qtable for the entry (q1,action)
-        2) set the player's current state to q2
-        3) make a new move
+        1) Update the qtable for the entry (q1,action).
+        2) Set the player's current state to q2.
+        3) Make a new move.
 
-        otherwise, keep moving in the direction previously taken
+        Otherwise, keep moving in the direction previously taken.
         */
 
 

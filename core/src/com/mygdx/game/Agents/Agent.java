@@ -38,7 +38,7 @@ public abstract class Agent {
 
 
     public static float current_speed = 500;
-    public static final float max_speed = 700;
+    public static final float max_speed = 800;
     public static final float min_spped = 100;
     private Action action;
     public final Rectangle pos;
@@ -65,20 +65,20 @@ public abstract class Agent {
     }
 
 
-    /* @param Tile
-       @returns Action: the best possible action on a given Tile.
-
-       Iterates through all possibles (tile,action) tuples and
-       finds the best one. Selects a random action
-       if there are many best actions.
-     */
+    /*
+     @param Tile
+     @returns Action: the best possible action on a given Tile.
+    */
     public Action getBestActionAtState(Tile tile) {
+
+        //collects all possible actions with their values
         Map<Action, Double> actionToValue = q_table.entrySet().stream().
                 filter(x -> x.getKey().getValue0().getId().equals(tile.getId())).
                 collect(Collectors.toMap(x -> x.getKey().getValue1(),
-                                         x -> x.getValue()));
+                        x -> x.getValue()));
 
 
+        //find the value mapping to the best action
         double bestValue = Collections.max(actionToValue.values());
 
         List<Action> bestActions = actionToValue.entrySet().stream().
@@ -103,7 +103,7 @@ public abstract class Agent {
     protected Action getAction() {
 
         if (epsilon > Math.random()) {
-            return actionList.get(random.nextInt(actionList.size()));
+            return getRandomAction();
         } else {
             Action bestAction = getBestActionAtState(currentKnownState);
             return bestAction;
@@ -149,12 +149,12 @@ public abstract class Agent {
 
     }
 
-    public void increaseSpeed(){
-        current_speed =  Math.min(current_speed+20,max_speed);
+    public void increaseSpeed() {
+        current_speed = Math.min(current_speed + 20, max_speed);
     }
 
-    public void decreaseSpeed(){
-        current_speed = Math.max(current_speed-20,min_spped);
+    public void decreaseSpeed() {
+        current_speed = Math.max(current_speed - 20, min_spped);
     }
 
     public Texture getImage() {

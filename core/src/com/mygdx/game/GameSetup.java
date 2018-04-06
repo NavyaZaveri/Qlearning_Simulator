@@ -19,7 +19,7 @@ import java.util.Set;
 
 import static com.mygdx.game.Utils.GameConstants.*;
 /*
-Allows the users to select positions for goals and obstacles
+Allows the user to select positions for goals and obstacles
  */
 
 public final class GameSetup implements Screen {
@@ -47,7 +47,7 @@ public final class GameSetup implements Screen {
     }
 
 
-    //a 3-way cyclic toggle
+    //a 3-state cyclic toggle
     private void toggle(Tile tile) {
 
         if (tile.isNeutral()) {

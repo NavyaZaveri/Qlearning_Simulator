@@ -32,8 +32,8 @@ public class Board {
     }
 
     public void display(SpriteBatch batch) {
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 Tile tile = getTile(i, j);
 
                 batch.draw(tile.getNeutralTileImage(), j * tile.getWidth(), i * tile.getHeight(),

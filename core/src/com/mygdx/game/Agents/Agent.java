@@ -38,8 +38,8 @@ public abstract class Agent {
 
 
     public static float current_speed = 500;
-    public static final float max_speed = 800;
-    public static final float min_spped = 100;
+    private static final float max_speed = 1000;
+    private static final float min_spped = 100;
     private Action action;
     public final Rectangle pos;
 
@@ -55,7 +55,7 @@ public abstract class Agent {
     }
 
     /*@param Tile:
-      @returns Double: the value assoicated with best action possible at a given state
+      @returns Double: the value associated with best action possible at a given state
      */
     public Double getBestValueAtState(Tile tile) {
 
@@ -67,7 +67,7 @@ public abstract class Agent {
 
     /*
      @param Tile
-     @returns Action: the best possible action on a given Tile.
+     @returns Action: the best possible action on a given state.
     */
     public Action getBestActionAtState(Tile tile) {
 

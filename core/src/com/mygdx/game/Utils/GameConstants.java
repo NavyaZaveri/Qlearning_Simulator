@@ -11,16 +11,15 @@ public class GameConstants {
     public static int COLUMNS;
 
 
-
     public static final float POSITIVE_REWARD = 10;
     public static final float NEGATIVE_REWARD = -10;
     public static final float NEUTRAL_REWARD = 0;
 
-    public static void setROWS(int rows){
+    public static void setROWS(int rows) {
         ROWS = rows;
     }
 
-    public static void setCOLUMNS(int columns){
+    public static void setCOLUMNS(int columns) {
         COLUMNS = columns;
     }
 

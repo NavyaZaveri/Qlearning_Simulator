@@ -19,9 +19,9 @@ import com.kotcrab.vis.ui.widget.spinner.Spinner;
 import com.mygdx.game.Utils.FontUtils;
 
 public final class StartScreen extends Game {
-    SpriteBatch batch;
-    Boolean gameStarted = false;
-    BitmapFont font;
+    private SpriteBatch batch;
+    private Boolean gameStarted = false;
+    private BitmapFont font;
 
     @Override
     public void create() {

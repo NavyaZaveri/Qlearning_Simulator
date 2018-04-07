@@ -45,6 +45,7 @@ public final class InputHandler implements Screen {
             }
         });
 
+
         intSpinner.setPosition(x, y);
         intSpinner.setWidth(500);
         return intSpinner;

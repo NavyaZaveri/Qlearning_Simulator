@@ -73,7 +73,7 @@ public final class GameSetup implements Screen {
         return Collections.unmodifiableSet(this.goalStates);
     }
 
-    //@returns: an immutable set of fire states 
+    //@returns: an immutable set of fire states
     private Set<Tile> getFireStates() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
@@ -131,7 +131,6 @@ public final class GameSetup implements Screen {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (board.getTile(i, j).getRectangle().contains(x, y)) {
-                    System.out.println(board.getTile(i, j).getId());
                     return board.getTile(i, j);
                 }
 

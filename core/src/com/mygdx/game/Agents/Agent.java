@@ -54,9 +54,7 @@ public abstract class Agent {
 
     }
 
-    /*@param Tile:
-      @returns Double: the value associated with best action possible at a given state
-     */
+
     public Double getBestValueAtState(Tile tile) {
 
         return Collections.max(q_table.entrySet().stream().
@@ -65,10 +63,7 @@ public abstract class Agent {
     }
 
 
-    /*
-     @param Tile
-     @returns Action: the best possible action on a given state.
-    */
+
     public Action getBestActionAtState(Tile tile) {
 
         //collects all possible actions with their values
@@ -78,7 +73,7 @@ public abstract class Agent {
                         x -> x.getValue()));
 
 
-        //find the value mapping to the best action
+        //find the value mapped the best action
         double bestValue = Collections.max(actionToValue.values());
 
         List<Action> bestActions = actionToValue.entrySet().stream().
@@ -98,8 +93,7 @@ public abstract class Agent {
     }
 
 
-    /*epsilon-greedy strategy
-     @returns Action*/
+    /*epsilon-greedy strategy */
     protected Action getAction() {
 
         if (epsilon > Math.random()) {

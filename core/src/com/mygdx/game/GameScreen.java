@@ -149,7 +149,6 @@ public final class GameScreen implements Screen {
 
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
-                System.out.println("fire " + tile.getId());
                 graph.setEdgeWeight(r, NEGATIVE_REWARD);
             }
         }
@@ -164,7 +163,6 @@ public final class GameScreen implements Screen {
             Set<Reward> rewards = graph.incomingEdgesOf(tile);
             for (Reward r : rewards) {
                 graph.setEdgeWeight(r, POSITIVE_REWARD);
-                System.out.println("goal" + tile.getId());
             }
         }
     }
@@ -271,7 +269,6 @@ public final class GameScreen implements Screen {
 
         if (changeOfstate()) {
             double reward = graph.getEdge(agent.currentKnownState, getNewState()).getWeight();
-            System.out.println(reward);
 
             agent.updateQ_table(reward, getNewState());
 

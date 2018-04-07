@@ -73,7 +73,7 @@ public final class GameSetup implements Screen {
         return Collections.unmodifiableSet(this.goalStates);
     }
 
-    //@returns: an immutable set of goal states
+    //@returns: an immutable set of fire states 
     private Set<Tile> getFireStates() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
